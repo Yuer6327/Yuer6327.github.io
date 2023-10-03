@@ -1,11 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+    <SCRIPT language=JavaScript> 
+        function password() { 
+        var testV = 1; 
+        var pass1 = prompt('请输入密码(4826809):',''); 
+        while (testV < 3) { 
+        if (!pass1) 
+        history.go(-1); 
+        if (pass1 == "4826809") { 
+        alert('密码正确!'); 
+        break; 
+        } 
+        testV+=-1; 
+        var pass1 = prompt('密码错误!请重新输入:'); 
+        } 
+        if (pass1!="password" & testV ==3) 
+        history.go(-1); 
+        return " "; 
+        } 
+        document.write(password()); 
+        </SCRIPT>
 <head>
 <meta charset="UTF-8">
+<style>
+    body{
+        background-size: 100% ;
+        background-attachment:scroll
+    }
+</style>
 <title>Yuer6327的个人网站</title>
 <link rel="icon" href="./图标.ico">
-</style>
-<body>
+<body background="./背景.jpg">
     <h1>Yuer6327的个人网站</h1>
     <h3>——Yuer6327的博客兼小宝库</h3>
     <h5>分享一些免费好用的小软件</h5>
@@ -15,6 +40,7 @@
     <p>若又不能正常使用的留言至：</p>
     <p>1.邮箱：Tom_2782587337@outlook.com</p>
     <p>2.Github：<a href="https://github.com/Yuer6327/Yuer6327.github.io/issues/new">Github Issues</a></p>
+    <p>#####################################</p>
     <p>微软输入法词库</p>
     <p>https://pan.quark.cn/s/ba7ad79468f9</p>
     <p>CompactGUI</p>
