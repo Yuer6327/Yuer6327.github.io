@@ -1,23 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<style>
-    body{
-        background-size: 100% ;
-        background-attachment:fixed
-    }
-    button{
-        padding: 10px 20px;
-        font-size: 18px;
-        margin: 20px;
-    }
-</style>
-<title>Yuer6327的个人网站</title>
-<link rel="icon" href="./图标.ico">
-<body background="./picture - 副本.jpg">
-    <h1>Yuer6327的个人网站</h1>
-    <p>欢迎来到Yuer6327的个人网站！</p>
-    <a href="https://github.com/Yuer6327">Github</a></p>
-    <button onclick="location.href='./baoku/index.html'">宝库</button>
-    <button onclick="location.href='./blog/index.html'">博客</button>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuer6327's Lab</title>
+    <link rel="icon" href="https://yuer6327.top/wp-content/uploads/2025/10/新高中头像.webp" type="image/webp">
+    <link rel="apple-touch-icon" href="https://yuer6327.top/wp-content/uploads/2025/10/新高中头像.webp">
+    <style>
+        :root{--bg-color:#202020;--text-color:#ffffff;--glass-bg:rgba(38,38,38,0.7);--glass-border:rgba(255,255,255,0.1);--spotlight-color:rgba(255,255,255,0.03);--shine-color:rgba(255,255,255,0.1);--radius-main:24px;--radius-small:16px}
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{width:100%;height:100%}
+        body{background-color:var(--bg-color);color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;display:flex;justify-content:center;align-items:flex-start;padding:4rem 1rem;min-height:100vh;position:relative;overflow-x:hidden;font-synthesis:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+        .background-aurora{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:.3;background:linear-gradient(125deg,#00A3FF,#FF007A,#3FFF00);background-size:400% 400%;filter:blur(100px);animation:gradient-animation 15s ease infinite}
+        @keyframes gradient-animation{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .spotlight{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;background:radial-gradient(circle at var(--mouse-x,50%) var(--mouse-y,50%),var(--spotlight-color) 0%,transparent 30%);opacity:0;transition:opacity .4s ease-out}
+        .container{width:100%;max-width:900px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:2rem}
+        .profile-header,.project-card,.page-footer{background:var(--glass-bg);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid var(--glass-border);border-radius:var(--radius-main);padding:2rem;width:100%;transition:all .3s cubic-bezier(.25,.8,.25,1)}
+        .profile-header{display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center}
+        .avatar{width:100px;height:100px;border-radius:var(--radius-small);border:2px solid var(--glass-border);object-fit:cover;box-shadow:0 4px 15px rgba(0,0,0,.2)}
+        .title{font-size:2.2rem;font-weight:600;letter-spacing:-.5px}
+        .subtitle{font-size:1.1rem;opacity:.8;margin-top:-.5rem}
+        .blog-link{display:inline-block;margin-top:1rem;padding:.75rem 1.5rem;background-color:rgba(255,255,255,.1);color:var(--text-color);text-decoration:none;border-radius:var(--radius-small);font-weight:500;transition:all .3s ease}
+        .blog-link:hover{background-color:rgba(255,255,255,.2);transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.2)}
+        .projects{width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+        .project-card{padding:0;text-decoration:none;color:var(--text-color);overflow:hidden;position:relative;transform-style:preserve-3d;will-change:transform}
+        .project-card:hover{border-color:rgba(255,255,255,.2);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+        .card-content{padding:1.5rem;display:flex;flex-direction:column;gap:.5rem;position:relative;z-index:2}
+        .card-title{font-size:1.3rem;font-weight:600}
+        .card-description{font-size:.9rem;opacity:.8;line-height:1.5}
+        .card-shine{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;opacity:0;background:radial-gradient(circle at var(--shine-x,50%) var(--shine-y,50%),var(--shine-color) 0%,transparent 40%);transition:opacity .3s ease;will-change:background}
+        .project-card:hover .card-shine{opacity:1}
+        .page-footer{text-align:center;font-size:.85rem;opacity:.6;padding:1.5rem}
+        .page-footer p{margin:.25rem 0;line-height:1.6}
+        .mailto-link{color:var(--text-color);text-decoration:none;font-weight:500}
+        .mailto-link:hover{text-decoration:underline}
+        @media(max-width:768px){body{padding:2rem 1rem}.title{font-size:1.8rem}.subtitle{font-size:1rem}.profile-header,.project-card,.page-footer{border-radius:var(--radius-small);padding:1.5rem}.card-content{padding:0}.projects{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <div class="background-aurora"></div>
+    <div class="spotlight"></div>
+    <main class="container">
+        <header class="profile-header">
+            <img src="https://yuer6327.top/wp-content/uploads/2025/10/新高中头像.webp" alt="Yuer6327 Avatar" class="avatar" onerror="this.src='https://placehold.co/100x100/333333/FFFFFF?text=Yuer6327';this.onerror=null;">
+            <h1 class="title">Here is Yuer6327's Lab</h1>
+            <p class="subtitle">You may see anything here...</p>
+            <a href="https://yuer6327.top" class="blog-link" target="_blank" rel="noopener noreferrer">访问个人博客 (Visit Personal Blog)</a>
+        </header>
+        <section class="projects">
+            <a href="https://project.mkliu.top/" class="project-card" target="_blank" rel="noopener noreferrer">
+                <div class="card-content">
+                    <h3 class="card-title">课题项目 (School Project)</h3>
+                    <p class="card-description">青创赛课题研究平台，点击试用-&gt;</p>
+                </div>
+                <div class="card-shine"></div>
+            </a>
+            <a href="#" class="project-card" onclick="event.preventDefault();" title="Coming Soon">
+                <div class="card-content">
+                    <h3 class="card-title">项目二 (Project Two)</h3>
+                    <p class="card-description">Description Here...</p>
+                </div>
+                <div class="card-shine"></div>
+            </a>
+            <a href="#" class="project-card" onclick="event.preventDefault();" title="Coming Soon">
+                <div class="card-content">
+                    <h3 class="card-title">项目三 (Project Three)</h3>
+                    <p class="card-description">Description Here...</p>
+                </div>
+                <div class="card-shine"></div>
+            </a>
+        </section>
+        <footer class="page-footer">
+            <p>本页面所有项目为个人兴趣之作</p>
+            <p>Copyright © 2025 By <a href="mailto:Tom_2782587337@outlook.com" class="mailto-link">Yuer6327</a></p>
+        </footer>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded',()=>{
+            const spotlight=document.querySelector('.spotlight');
+            const isTouchDevice=()=>'ontouchstart' in window||navigator.maxTouchPoints>0;
+            if(spotlight&&!isTouchDevice()){
+                document.addEventListener('mousemove',e=>{spotlight.style.setProperty('--mouse-x',e.clientX+'px');spotlight.style.setProperty('--mouse-y',e.clientY+'px');if(spotlight.style.opacity<1)spotlight.style.opacity='1'});
+                document.addEventListener('mouseleave',()=>{spotlight.style.opacity='0'});
+            }
+            const cards=document.querySelectorAll('.project-card');
+            cards.forEach(card=>{const shine=card.querySelector('.card-shine');card.addEventListener('mousemove',e=>{const rect=card.getBoundingClientRect();const x=e.clientX-rect.left;const y=e.clientY-rect.top;const width=rect.width;const height=rect.height;if(shine){shine.style.setProperty('--shine-x',x+'px');shine.style.setProperty('--shine-y',y+'px')}const rotateX=(y/height-0.5)*-20;const rotateY=(x/width-0.5)*20;card.style.transform=`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`});card.addEventListener('mouseleave',()=>{card.style.transform='perspective(1000px) rotateX(0) rotateY(0) scale(1)'});});
+        });
+    </script>
+</body>
+</html>
