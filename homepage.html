@@ -144,11 +144,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 20px;
-            transition: background-color 0.3s ease, color 0.3s ease;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden; /* Allow vertical scroll, prevent horizontal */
         }
 
         body::before {
@@ -218,7 +216,6 @@
         }
 
         .glass-card:hover {
-            transform: translateY(-5px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
 
@@ -257,7 +254,6 @@
         }
 
         .glass-button:hover {
-            transform: translateX(10px);
             background: rgba(255, 255, 255, 0.2);
         }
 
@@ -366,7 +362,25 @@
         }
 
         .theme-toggle:hover {
-            transform: rotate(15deg);
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        /* View Transition API Animation */
+        @keyframes circle-reveal {
+            from {
+                clip-path: circle(0% at var(--x) var(--y));
+            }
+            to {
+                clip-path: circle(150% at var(--x) var(--y));
+            }
+        }
+
+        ::view-transition-new(root) {
+            animation: 0.6s cubic-bezier(0.4, 0, 0.2, 1) both circle-reveal;
+        }
+
+        ::view-transition-old(root) {
+            animation: none;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -472,45 +486,56 @@
         document.addEventListener('DOMContentLoaded', function() {
             const fadeElements = document.querySelectorAll('.fade-in');
             
-            // 为所有.fade-in元素添加.show类以触发动画
             function triggerAnimations() {
                 fadeElements.forEach(el => {
                     el.classList.add('show');
                 });
             }
             
-            // 使用setTimeout确保在下一帧开始动画
             setTimeout(triggerAnimations, 10);
             
-            // 主题切换功能
             const themeToggle = document.getElementById('themeToggle');
-            
-            // 检查用户之前的主题偏好
-            const savedTheme = localStorage.getItem('theme');
             const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            
-            if (savedTheme) {
-                // 使用保存的主题
-                document.body.classList.add(savedTheme + '-theme');
-            } else {
-                // 使用系统默认主题
-                if (prefersDarkScheme.matches) {
+
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.remove('light-theme');
                     document.body.classList.add('dark-theme');
                 } else {
+                    document.body.classList.remove('dark-theme');
                     document.body.classList.add('light-theme');
                 }
             }
+
+            function toggleTheme() {
+                const isDark = document.body.classList.contains('dark-theme');
+                const newTheme = isDark ? 'light' : 'dark';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                applyTheme(prefersDarkScheme.matches ? 'dark' : 'light');
+            }
             
-            themeToggle.addEventListener('click', function() {
-                if (document.body.classList.contains('dark-theme')) {
-                    document.body.classList.remove('dark-theme');
-                    document.body.classList.add('light-theme');
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    document.body.classList.remove('light-theme');
-                    document.body.classList.add('dark-theme');
-                    localStorage.setItem('theme', 'dark');
+            themeToggle.addEventListener('click', function(event) {
+                if (!document.startViewTransition) {
+                    toggleTheme();
+                    return;
                 }
+
+                const x = event.clientX;
+                const y = event.clientY;
+
+                document.documentElement.style.setProperty('--x', x + 'px');
+                document.documentElement.style.setProperty('--y', y + 'px');
+
+                document.startViewTransition(() => {
+                    toggleTheme();
+                });
             });
         });
     </script>
