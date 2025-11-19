@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuer6327 | Personal Page</title>
+    <link rel="icon" href="https://imgtu.com/uploads/imsqpyxh/file_f337a7.png">
+    <style>
+        :root {
+            /* Light Mode Variables (Default) */
+            --bg-color: #ffffff;
+            --text-main: #202020;
+            --text-sub: #555555;
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --card-bg: rgba(240, 240, 240, 0.5);
+            --card-hover-bg: rgba(230, 230, 230, 0.7);
+            --card-border: rgba(0, 0, 0, 0.05);
+            --highlight: #000000;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+            --liquid-shine: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Dark Mode Variables */
+        body.dark-mode {
+            --bg-color: #202020;
+            --text-main: #ffffff;
+            --text-sub: #aaaaaa;
+            --glass-bg: rgba(32, 32, 32, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-hover-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --highlight: #ffffff;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --liquid-shine: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Desktop disable scroll */
+            position: relative;
+        }
+
+        /* Content Wrapper to handle cloning */
+        .app-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Main Glass Container */
+        .glass-container {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            padding: 3rem;
+            border-radius: 24px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Liquid effect reflection */
+            box-shadow: inset 0 0 20px var(--liquid-shine), var(--shadow);
+        }
+
+        /* Theme Switcher */
+        .theme-toggle {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: var(--card-hover-bg);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-main);
+        }
+
+        /* Content Styles */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            width: 100%;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background-image: url('https://imgtu.com/uploads/imsqpyxh/file_f337a7.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 0; /* Square as requested */
+            margin: 0 auto 1.5rem;
+            /* No border as requested */
+            opacity: 0;
+            animation: fadeSlideUp 0.8s ease forwards 0.1s;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s ease forwards 0.2s;
+        }
+
+        .bio {
+            font-size: 1rem;
+            color: var(--text-sub);
+            font-weight: 400;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s ease forwards 0.3s;
+        }
+
+        /* Sections */
+        .section {
+            width: 100%;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s ease forwards;
+        }
+
+        .section:nth-of-type(1) { animation-delay: 0.4s; }
+        .section:nth-of-type(2) { animation-delay: 0.5s; }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-sub);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            padding-left: 4px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Link Cards */
+        .link-card {
+            text-decoration: none;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            height: 100px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px);
+            background: var(--card-hover-bg);
+            border-color: var(--glass-border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-main);
+            margin-bottom: auto;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            font-weight: 700; /* Bold as requested */
+            color: var(--text-main);
+            z-index: 2;
+        }
+
+        /* Arrow Icon */
+        .arrow-icon {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            width: 16px;
+            height: 16px;
+            fill: var(--text-sub);
+            opacity: 0.6;
+            transition: transform 0.3s ease, opacity 0.3s ease, fill 0.3s ease;
+        }
+
+        .link-card:hover .arrow-icon {
+            transform: translate(2px, -2px);
+            opacity: 1;
+            fill: var(--highlight);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeSlideUp 0.8s ease forwards 0.6s;
+        }
+
+        .footer a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--text-sub);
+            transition: border-bottom 0.3s;
+        }
+
+        .footer a:hover {
+            border-bottom: 1px solid var(--text-main);
+        }
+
+        /* Animations */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cloning Overlay Logic for Theme Switch */
+        .theme-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none; /* Let clicks pass through until animation starts? No, block during anim */
+            overflow: hidden;
+            display: none;
+        }
+        
+        .theme-overlay.active {
+            display: block;
+            pointer-events: auto; /* Block interactions during transition */
+        }
+
+        .theme-overlay .app-wrapper {
+            /* This inner wrapper will move/clip */
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Mobile Adaptation */
+        @media (max-width: 768px) {
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto; /* Enable scroll on mobile */
+                padding: 1rem;
+                align-items: flex-start;
+            }
+            
+            .glass-container {
+                width: 100%;
+                padding: 2rem 1.5rem;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr 1fr; /* 2 per row on mobile */
+            }
+
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+             .grid-container {
+                grid-template-columns: 1fr; /* 1 per row on very small screens */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- The Main Content Wrapper -->
+    <div class="app-wrapper" id="app-root">
+        
+        <button class="theme-toggle" id="theme-btn" aria-label="Toggle Theme">
+            <!-- Sun Icon (Visible in Dark Mode) -->
+            <svg class="sun-icon" viewBox="0 0 24 24" style="display: none;">
+                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.29-1.29zm1.41-13.78c-.39-.39-1.02-.39-1.41 0a.996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.29-1.29zM7.28 17.28c-.39-.39-1.02-.39-1.41 0a.996.996 0 000 1.41l1.29 1.29c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.29-1.29z"></path>
+            </svg>
+            <!-- Moon Icon (Visible in Light Mode) -->
+            <svg class="moon-icon" viewBox="0 0 24 24">
+                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
+            </svg>
+        </button>
+
+        <div class="glass-container">
+            <div class="profile-header">
+                <div class="avatar"></div>
+                <h1 class="title">Yuer6327</h1>
+                <p class="bio">——精彩的人生就是无休止地折腾。</p>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Personal Links</div>
+                <div class="grid-container">
+                    <a href="https://x.com/yuer6327" target="_blank" class="link-card">
+                        <svg class="card-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        <span class="card-text">X (Twitter)</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
+                    </a>
+                    <a href="https://github.com/Yuer6327" target="_blank" class="link-card">
+                        <svg class="card-icon" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.398.1 2.651.64.699 1.028 1.597 1.028 2.688 0 3.848-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12c0-5.523-4.477-10-10-10z"/></svg>
+                        <span class="card-text">Github</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
+                    </a>
+                    <a href="mailto:Tom_2782587337@outlook.com" class="link-card">
+                        <svg class="card-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        <span class="card-text">Outlook</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Site & Projects</div>
+                <div class="grid-container">
+                    <a href="https://yuer6327.top/blog" target="_blank" class="link-card">
+                        <svg class="card-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                        <span class="card-text">Blog</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
+                    </a>
+                    <a href="https://pan.yuer6327.top" target="_blank" class="link-card">
+                        <svg class="card-icon" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                        <span class="card-text">Pan</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
+                    </a>
+                    <a href="https://project.mkliu.top/" target="_blank" class="link-card">
+                        <svg class="card-icon" viewBox="0 0 24 24"><path d="M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z"/></svg>
+                        <span class="card-text">Project</span>
+                        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer">
+                本页面所有项目为个人兴趣之作<br>
+                Copyright © 2025 By <a href="mailto:Tom_2782587337@outlook.com">Yuer6327</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Overlay for Animation -->
+    <div class="theme-overlay" id="theme-overlay"></div>
+
+    <script>
+        const themeBtn = document.getElementById('theme-btn');
+        const body = document.body;
+        const appRoot = document.getElementById('app-root');
+        const overlay = document.getElementById('theme-overlay');
+        
+        // SVG Icons
+        const sunIcon = document.querySelector('.sun-icon');
+        const moonIcon = document.querySelector('.moon-icon');
+
+        // Detect system theme
+        let isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        function updateIcons() {
+            if (isDark) {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        function applyTheme(element, dark) {
+            if (dark) {
+                element.classList.add('dark-mode');
+            } else {
+                element.classList.remove('dark-mode');
+            }
+        }
+
+        // Initialize
+        applyTheme(body, isDark);
+        updateIcons();
+
+        themeBtn.addEventListener('click', (e) => {
+            // 1. Prepare the Overlay
+            // Clone the entire content into the overlay
+            overlay.innerHTML = '';
+            const clone = appRoot.cloneNode(true);
+            overlay.appendChild(clone);
+
+            // 2. Set the Overlay theme to the NEW theme
+            const nextStateIsDark = !isDark;
+            // Apply the theme class to the cloned wrapper inside overlay
+            // Note: Since CSS variables are on body, we need to simulate the class on the wrapper or inline styles.
+            // Better approach: The overlay container acts as a window to a "body" with the new class.
+            
+            // Let's toggle the class on the clone to represent the target state
+            // BUT, our CSS uses `body.dark-mode`. The clone is inside `div.theme-overlay`.
+            // We need to make the clone look like the target state.
+            // To solve this without complex CSS refactoring:
+            // We set the specific CSS variables on the `overlay` element itself to override inherited body variables.
+            
+            const darkVars = `
+                --bg-color: #202020;
+                --text-main: #ffffff;
+                --text-sub: #aaaaaa;
+                --glass-bg: rgba(32, 32, 32, 0.6);
+                --glass-border: rgba(255, 255, 255, 0.15);
+                --card-bg: rgba(255, 255, 255, 0.03);
+                --card-hover-bg: rgba(255, 255, 255, 0.08);
+                --card-border: rgba(255, 255, 255, 0.1);
+                --highlight: #ffffff;
+                --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+                --liquid-shine: rgba(255, 255, 255, 0.1);
+            `;
+            
+            const lightVars = `
+                --bg-color: #ffffff;
+                --text-main: #202020;
+                --text-sub: #555555;
+                --glass-bg: rgba(255, 255, 255, 0.6);
+                --glass-border: rgba(0, 0, 0, 0.08);
+                --card-bg: rgba(240, 240, 240, 0.5);
+                --card-hover-bg: rgba(230, 230, 230, 0.7);
+                --card-border: rgba(0, 0, 0, 0.05);
+                --highlight: #000000;
+                --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+                --liquid-shine: rgba(255, 255, 255, 0.8);
+            `;
+
+            overlay.style.cssText = nextStateIsDark ? darkVars : lightVars;
+            // Also ensure the background color matches immediately for the "reveal"
+            overlay.style.backgroundColor = nextStateIsDark ? '#202020' : '#ffffff';
+
+            // Fix icon in clone
+            const cloneSun = clone.querySelector('.sun-icon');
+            const cloneMoon = clone.querySelector('.moon-icon');
+            if (nextStateIsDark) {
+                cloneSun.style.display = 'block';
+                cloneMoon.style.display = 'none';
+            } else {
+                cloneSun.style.display = 'none';
+                cloneMoon.style.display = 'block';
+            }
+
+            // 3. Position the Clip Path
+            const rect = themeBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            overlay.style.clipPath = `circle(0px at ${centerX}px ${centerY}px)`;
+            overlay.classList.add('active');
+
+            // 4. Animate
+            // Determine radius needed to cover screen
+            const maxDim = Math.max(window.innerWidth, window.innerHeight);
+            const finalRadius = maxDim * 1.5;
+
+            const animation = overlay.animate(
+                [
+                    { clipPath: `circle(0px at ${centerX}px ${centerY}px)` },
+                    { clipPath: `circle(${finalRadius}px at ${centerX}px ${centerY}px)` }
+                ],
+                {
+                    duration: 600,
+                    easing: 'cubic-bezier(0.645, 0.045, 0.355, 1.000)', // Ease In Out Cubic
+                    fill: 'forwards'
+                }
+            );
+
+            animation.onfinish = () => {
+                // Commit state change to real DOM
+                isDark = !isDark;
+                applyTheme(body, isDark);
+                updateIcons();
+                
+                // Reset overlay
+                overlay.classList.remove('active');
+                overlay.innerHTML = '';
+            };
+        });
+
+    </script>
+</body>
+</html>

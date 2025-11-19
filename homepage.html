@@ -221,9 +221,13 @@
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-sub);
+            margin-bottom: 1rem;
             font-weight: 600;
-            margin-bottom: 20px;
+            padding-left: 4px;
         }
 
         .links-container {
@@ -233,43 +237,81 @@
         }
 
         .links-row {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap; /* 允许换行以适应小屏幕 */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
         }
 
         .glass-button {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            border-radius: 15px;
             text-decoration: none;
-            color: inherit;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            gap: 10px;
-            flex: 1;
-            min-width: 100px;
-            font-weight: bold;
+            background: var(--card-bg-light);
+            border: 1px solid var(--card-border-light);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            height: 100px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            color: var(--text-color-light);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .glass-button {
+                background: var(--card-bg-dark);
+                border: 1px solid var(--card-border-dark);
+                color: var(--text-color-dark);
+            }
+        }
+
+        body.light-theme .glass-button {
+            background: var(--card-bg-light);
+            border: 1px solid var(--card-border-light);
+            color: var(--text-color-light);
+        }
+
+        body.dark-theme .glass-button {
+            background: var(--card-bg-dark);
+            border: 1px solid var(--card-border-dark);
+            color: var(--text-color-dark);
         }
 
         .glass-button:hover {
+            transform: translateY(-4px);
             background: rgba(255, 255, 255, 0.2);
         }
 
-        .button-content {
-            flex-grow: 1;
+        .card-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: inherit;
+            z-index: 2;
+            margin-bottom: auto;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            margin-bottom: auto;
         }
 
         .arrow-icon {
-            font-size: 1.2rem;
-            font-weight: bold;
-            transition: transform 0.3s ease;
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            opacity: 0.6;
+            transition: transform 0.3s ease, opacity 0.3s ease, fill 0.3s ease;
         }
 
         .glass-button:hover .arrow-icon {
             transform: translate(2px, -2px);
+            opacity: 1;
         }
 
         .footer {
@@ -429,9 +471,7 @@
     </style>
 </head>
 <body>
-    <!-- 添加主题切换按钮 -->
-    <div class="theme-toggle" id="themeToggle"></div>
-    <br>
+    <!-- 主要内容区域，确保在无JS时也可访问 -->
     <div class="container">
         <div class="profile-section fade-in delay-1">
             <img src="https://imgtu.com/uploads/imsqpyxh/r-file_f337a7.webp" 
@@ -445,16 +485,19 @@
             <h2 class="card-title">Personal Links</h2>
             <div class="links-row">
                 <a href="https://x.com/yuer6327" class="glass-button fade-in delay-6" target="_blank">
-                    <span class="button-content">X</span>
-                    <span class="arrow-icon">↗</span>
+                    <svg class="card-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <span class="card-text">X (Twitter)</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
                 </a>
                 <a href="https://github.com/Yuer6327" class="glass-button fade-in delay-7" target="_blank">
-                    <span class="button-content">Github</span>
-                    <span class="arrow-icon">↗</span>
+                    <svg class="card-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.398.1 2.651.64.699 1.028 1.597 1.028 2.688 0 3.848-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12c0-5.523-4.477-10-10-10z"/></svg>
+                    <span class="card-text">Github</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
                 </a>
                 <a href="mailto:Tom_2782587337@outlook.com" class="glass-button fade-in delay-8" target="_blank">
-                    <span class="button-content">Outlook</span>
-                    <span class="arrow-icon">↗</span>
+                    <svg class="card-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <span class="card-text">Outlook</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
                 </a>
             </div>
         </div>
@@ -463,16 +506,19 @@
             <h2 class="card-title">Site & Projects</h2>
             <div class="links-row">
                 <a href="https://yuer6327.top/blog" class="glass-button fade-in delay-6" target="_blank">
-                    <span class="button-content">Blog</span>
-                    <span class="arrow-icon">↗</span>
+                    <svg class="card-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                    <span class="card-text">Blog</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
                 </a>
                 <a href="https://pan.yuer6327.top" class="glass-button fade-in delay-7" target="_blank">
-                    <span class="button-content">Pan</span>
-                    <span class="arrow-icon">↗</span>
+                    <svg class="card-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+                    <span class="card-text">Pan</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
                 </a>
                 <a href="https://project.mkliu.top" class="glass-button fade-in delay-8" target="_blank">
-                    <span class="button-content">Project</span>
-                    <span class="arrow-icon">↗</span>
+                    <svg class="card-icon" viewBox="0 0 24 24" width="24" height="24"><path d="M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z"/></svg>
+                    <span class="card-text">Project</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
                 </a>
             </div>
         </div>
@@ -482,6 +528,9 @@
             Copyright © 2025 By <a href="mailto:Tom_2782587337@outlook.com">Yuer6327</a><br><br></p> <!-- 增加一行空行 -->
         </div>
     </div>
+    
+    <!-- 主题切换按钮放在主要内容之后，避免影响主要内容的索引 -->
+    <div class="theme-toggle" id="themeToggle" aria-label="切换主题"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
