@@ -68,6 +68,8 @@
             /* 初始背景设为深灰，用于配合开场动画 */
             background-color: #202020; 
             transition: background-color 0.8s ease;
+            /* 确保初始状态下使用暗色主题样式 */
+            color: var(--text-color-dark);
         }
 
         /* 为移动端启用垂直滚动 */
@@ -182,42 +184,6 @@
 
         /* ---------------- 主题与组件样式 ---------------- */
         
-        @media (prefers-color-scheme: light) {
-            body.light-theme {
-                background-color: var(--bg-color-light);
-                color: var(--text-color-light);
-            }
-            .glass-card {
-                background: var(--card-bg-light);
-                border: 1px solid var(--card-border-light);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            }
-            .glass-button {
-                background: var(--glass-light);
-                border: 1px solid var(--glass-border-light);
-                color: var(--text-color-light);
-            }
-            .arrow-icon { color: var(--arrow-color-light); }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body.dark-theme {
-                background-color: var(--bg-color-dark);
-                color: var(--text-color-dark);
-            }
-            .glass-card {
-                background: var(--card-bg-dark);
-                border: 1px solid var(--card-border-dark);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            }
-            .glass-button {
-                background: var(--glass-dark);
-                border: 1px solid var(--glass-border-dark);
-                color: var(--text-color-dark);
-            }
-            .arrow-icon { color: var(--arrow-color-dark); }
-        }
-
         /* 强制覆盖默认暗色偏好，用于动画后的状态控制 */
         body.loaded.light-theme {
             background-color: var(--bg-color-light);
@@ -236,6 +202,7 @@
             background: var(--card-bg-dark);
             border: 1px solid var(--card-border-dark);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            color: var(--text-color-dark); /* 确保卡片内文字为白色 */
         }
 
         /* 当切换到亮色模式时，SVG文字需要变黑 */
@@ -262,6 +229,23 @@
         
         body.loaded.light-theme .glass-button .arrow-icon {
             color: #202020; /* 深灰色箭头图标 */
+        }
+        
+        /* 暗色主题下小卡片样式：深灰底白字 */
+        body.loaded.dark-theme .glass-button {
+            color: var(--text-color-dark); /* 白色文字和图标 */
+        }
+        
+        body.loaded.dark-theme .glass-button .card-text {
+            color: var(--text-color-dark); /* 白色文字 */
+        }
+        
+        body.loaded.dark-theme .glass-button .card-icon {
+            fill: var(--text-color-dark); /* 白色图标 */
+        }
+        
+        body.loaded.dark-theme .glass-button .arrow-icon {
+            color: var(--text-color-dark); /* 白色箭头图标 */
         }
 
         .glass-card {
@@ -605,7 +589,6 @@
 
             // --- 主题逻辑 ---
             const themeToggle = document.getElementById('themeToggle');
-            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
 
             function applyTheme(theme) {
                 document.body.classList.add('loaded'); // 标记已加载，启用主题CSS
