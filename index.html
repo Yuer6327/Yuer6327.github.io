@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yuer6327 | 个人博客-项目开发与设计笔记</title>
-    <meta name="description" content="Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yuer6327 | 个人博客 - 项目开发与设计笔记</title>
+  <meta name="description" content="Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。">
     <link rel="canonical" href="https://yuer6327.top" />
     <script type="application/ld+json">
     {
@@ -41,630 +41,895 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "vmt52end9p");
     </script>
-    <style>
-        :root {
-            --bg-color-light: #ffffff;
-            --text-color-light: #202020;
-            --card-bg-light: rgba(255, 255, 255, 0.7);
-            --card-border-light: rgba(128, 128, 128, 0.5);
-            --bg-color-dark: #202020;
-            --text-color-dark: #ffffff;
-            --card-bg-dark: rgba(32, 32, 32, 0.7);
-            --card-border-dark: rgba(255, 255, 255, 0.3);
-            --glass-light: rgba(255, 255, 255, 0.15);
-            --glass-dark: rgba(0, 0, 0, 0.15);
-            --glass-border-light: rgba(128, 128, 128, 0.5);
-            --glass-border-dark: rgba(255, 255, 255, 0.5);
-            --arrow-color-light: #202020;
-            --arrow-color-dark: #ffffff;
-            
-            /* 动画相关变量 */
-            --anim-duration-draw: 2s;
-            --anim-duration-move: 0.8s;
-        }
+  <style>
+    /* ── Google Fonts: Inter Variable ── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-        /* 基础样式保持不变 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* ── CSS Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* 添加这一行实现垂直居中 */
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-            overflow-y: hidden; /* 桌面端禁止垂直滚动 */
-            /* 初始背景设为深灰，用于配合开场动画 */
-            background-color: #202020; 
-            transition: background-color 0.8s ease;
-            /* 确保初始状态下使用暗色主题样式 */
-            color: var(--text-color-dark);
-        }
+    :root {
+      /* Backgrounds */
+      --bg-marketing:  #08090a;
+      --bg-panel:      #0f1011;
+      --bg-surface:    #191a1b;
+      --bg-secondary:  #28282c;
 
-        /* 为移动端启用垂直滚动 */
-        @media (max-width: 768px) {
-            body {
-                overflow-y: auto;
-            }
-        }
+      /* Text */
+      --text-primary:    #f7f8f8;
+      --text-secondary:  #d0d6e0;
+      --text-tertiary:   #8a8f98;
+      --text-quaternary: #62666d;
 
-        /* ---------------- 开场动画层 ---------------- */
-        #intro-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #202020;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* 动画结束后穿透点击 */
-            pointer-events: none;
-        }
+      /* Brand */
+      --brand-indigo:  #5e6ad2;
+      --accent-violet: #7170ff;
+      --accent-hover:  #828fff;
 
-        #intro-svg {
-            width: 80vw;
-            max-width: 600px;
-            /* 初始在屏幕正中心 */
-            transform-origin: center center;
-            will-change: transform, top, left, width;
-            overflow: visible;
-        }
+      /* Borders */
+      --border-subtle:   rgba(255,255,255,0.05);
+      --border-standard: rgba(255,255,255,0.08);
+      --border-solid:    #23252a;
 
-        /* SVG 文字路径动画 */
-        .intro-text-path {
-            fill: transparent;
-            stroke: #ffffff;
-            stroke-width: 1.5;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: drawText var(--anim-duration-draw) cubic-bezier(0.5, 0, 0.5, 1) forwards;
-            font-family: "Brush Script MT", "Comic Sans MS", cursive, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; /* 手写风格并添加通用字体 */
-            font-weight: bold;
-            font-size: 80px;
-        }
+      /* Status */
+      --green-active: #27a644;
+      --green-pill:   #10b981;
 
-        @keyframes drawText {
-            0% {
-                stroke-dashoffset: 1000;
-                fill: transparent;
-            }
-            60% {
-                stroke-dashoffset: 0;
-                fill: transparent;
-            }
-            100% {
-                stroke-dashoffset: 0;
-                fill: #ffffff; /* 最终填充白色 */
-            }
-        }
+      /* Font */
+      --font-primary: 'Inter', 'SF Pro Display', -apple-system, system-ui, 'Segoe UI', Roboto, sans-serif;
+      --font-mono:    'ui-monospace', 'SF Mono', Menlo, monospace;
+    }
 
-        /* ---------------- 主内容布局 ---------------- */
+    html { scroll-behavior: smooth; }
 
-        /* 移除原有的 fade-in 类，改用 content-hidden */
-        .content-hidden {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.3s ease, transform 0.3s ease; /* 从0.8s改为0.3s保持一致性 */
-        }
+    body {
+      font-family: var(--font-primary);
+      font-feature-settings: 'cv01', 'ss03';
+      background-color: var(--bg-marketing);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
 
-        .content-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.18s ease;
+    }
 
-        .container {
-            max-width: 800px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            z-index: 1;
-            margin-top: 0; /* 将原来的40px改为0，实现完全居中 */
-        }
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
 
-        /* 标题占位符：不可见，仅用于布局计算 */
-        #title-placeholder {
-            font-family: "Brush Script MT", "Comic Sans MS", cursive, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            font-size: 3.2rem; /* 从3rem增加到3.2rem，增大约3px */
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 3px;
-            letter-spacing: -0.5px;
-            opacity: 0; /* 始终不可见，由SVG替代 */
-            pointer-events: none;
-            height: 1.2em; /* 确保占位 */
-            margin-top: 20px;
-            color: transparent;
-        }
+    /* ── Radial glow ── */
+    .glow-orb {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(94,106,210,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: blur(40px);
+    }
 
-        .bio {
-            font-size: 1.1rem; /* 从1.2rem缩小到1.1rem */
-            text-align: center;
-            opacity: 0.8;
-            max-width: 500px;
-            font-style: italic;
-            margin-top: -10px;
-            font-family: Georgia, 'Times New Roman', serif; /* 更换为衬线字体 */
-        }
+    /* ── Layout ── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
 
-        /* ---------------- 主题与组件样式 ---------------- */
-        
-        /* 强制覆盖默认暗色偏好，用于动画后的状态控制 */
-        body.loaded.light-theme {
-            background-color: var(--bg-color-light);
-            color: var(--text-color-light);
-        }
-        body.loaded.dark-theme {
-            background-color: var(--bg-color-dark);
-            color: var(--text-color-dark);
-        }
-        body.loaded.light-theme .glass-card {
-            background: var(--card-bg-light);
-            border: 1px solid var(--card-border-light);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        body.loaded.dark-theme .glass-card {
-            background: var(--card-bg-dark);
-            border: 1px solid var(--card-border-dark);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            color: var(--text-color-dark); /* 确保卡片内文字为白色 */
-        }
+    /* ── Header / Nav ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8,9,10,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
 
-        /* 当切换到亮色模式时，SVG文字需要变黑 */
-        body.loaded.light-theme #intro-svg .intro-text-path {
-            fill: #202020;
-            stroke: #202020;
-            transition: fill 0.5s ease, stroke 0.5s ease;
-        }
-        
-        /* 亮色主题下小卡片样式：白底白字 */
-        body.loaded.light-theme .glass-button {
-            background: #ffffff; /* 白色背景 */
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            color: #202020; /* 深灰色文字，确保在白色背景上可见 */
-        }
-        
-        body.loaded.light-theme .glass-button .card-text {
-            color: #202020; /* 深灰色文字 */
-        }
-        
-        body.loaded.light-theme .glass-button .card-icon {
-            fill: #202020; /* 深灰色图标 */
-        }
-        
-        body.loaded.light-theme .glass-button .arrow-icon {
-            color: #202020; /* 深灰色箭头图标 */
-        }
-        
-        /* 暗色主题下小卡片样式：深灰底白字 */
-        body.loaded.dark-theme .glass-button {
-            color: var(--text-color-dark); /* 白色文字和图标 */
-        }
-        
-        body.loaded.dark-theme .glass-button .card-text {
-            color: var(--text-color-dark); /* 白色文字 */
-        }
-        
-        body.loaded.dark-theme .glass-button .card-icon {
-            fill: var(--text-color-dark); /* 白色图标 */
-        }
-        
-        body.loaded.dark-theme .glass-button .arrow-icon {
-            color: var(--text-color-dark); /* 白色箭头图标 */
-        }
+    .nav-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
 
-        .glass-card {
-            border-radius: 20px;
-            padding: 25px;
-            width: 100%;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            transition: all 0.3s ease; /* 保持不变 */
-        }
-        .glass-card:hover {
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
 
-        .card-title {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: inherit;
-            margin-bottom: 1rem;
-            font-weight: 600;
-            padding-left: 4px;
-            opacity: 0.7;
-        }
+    .nav-logo-avatar {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 0;
+      display: block;
+      object-fit: contain;
+      background: transparent;
+    }
 
-        .links-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-        }
-
-        .glass-button {
-            text-decoration: none;
-            border-radius: 12px;
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            height: 100px;
-            transition: all 0.3s ease; /* 从cubic-bezier改为ease保持一致性 */
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .glass-button:hover {
-            transform: translateY(-4px);
-            background: rgba(128, 128, 128, 0.1);
-        }
-
-        .card-text { font-size: 1rem; font-weight: 700; color: inherit; z-index: 2; margin-bottom: auto; }
-        .card-icon { width: 24px; height: 24px; fill: currentColor; margin-bottom: auto; }
-
-        .arrow-icon {
-            position: absolute;
-            top: 1.2rem;
-            right: 1.2rem;
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
-            opacity: 0.6;
-            transition: transform 0.3s ease, opacity 0.3s ease; /* 保持不变 */
-        }
-        .glass-button:hover .arrow-icon { transform: translate(2px, -2px); opacity: 1; }
-
-        .footer {
-            text-align: center;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-top: 20px;
-            line-height: 1.6;
-        }
-        .footer a {
-            color: inherit;
-            text-decoration: none;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .footer a::after {
-            content: "";
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, currentColor 50%, transparent 50%);
-            background-size: 4px 1px;
-            background-repeat: repeat-x;
-            transition: all 0.3s ease;
-        }
-        
-        .footer a:hover::after {
-            background: currentColor;
-            height: 1px;
-        }
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--glass-light);
-            border: 1px solid var(--glass-border-light);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            transition: all 0.3s ease;
-            padding: 0;
-            border: none;
-            background: transparent;
-            overflow: visible;
-        }
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
-        }
-        .theme-toggle:hover { 
-            transform: scale(1.1) rotate(15deg); 
-        }
-        
-        body.dark-theme .theme-toggle {
-            background: var(--glass-dark);
-            border: 1px solid var(--glass-border-dark);
-        }
-        body.loaded.light-theme .theme-toggle {
-            background: var(--glass-light);
-            border: 1px solid #000000; /* 在亮色主题下使用黑色边框 */
-        }
-        /* 添加图标控制样式 */
-        .theme-icon {
-            position: absolute;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        
-        .sun-icon {
-            opacity: 1;
-            transform: rotate(0deg);
-        }
-        
-        .moon-icon {
-            opacity: 0;
-            transform: rotate(-90deg);
-        }
-        
-        body.dark-theme .sun-icon {
-            opacity: 0;
-            transform: rotate(90deg);
-        }
-        
-        body.dark-theme .moon-icon {
-            opacity: 1;
-            transform: rotate(0deg);
-        }
-        /* 切换图标的显示/隐藏 */
-        body.dark-theme .theme-icon .icon-sun {
-            display: none;
-        }
-        body.dark-theme .theme-icon .icon-moon {
-            display: block;
-        }
-
-        @keyframes circle-reveal {
-            from { clip-path: circle(0% at var(--x) var(--y)); }
-            to { clip-path: circle(150% at var(--x) var(--y)); }
-        }
-        ::view-transition-new(root) { animation: 0.6s cubic-bezier(0.4, 0, 0.2, 1) both circle-reveal; }
-        ::view-transition-old(root) { animation: none; }
-
-        @media (max-width: 600px) {
-            .links-row { flex-direction: column; }
-            #title-placeholder { font-size: 2.5rem; }
-        }
-    </style>
-    <link rel="alternate" type="application/rss+xml" title="Yuer6327 Blog" href="https://blog.yuer6327.top/feed" />
-    <meta name="author" content="Yuer6327" />
-    <meta name="keywords" content="Yuer6327, 个人博客，Web 开发，开源项目，blog" />
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      "name": "Yuer6327 Blog",
-      "url": "https://blog.yuer6327.top",
-      "author": {
-        "@type": "Person",
-        "name": "Yuer6327",
-        "url": "https://yuer6327.top"
-      },
-      "description": "Yuer6327 的个人技术博客，记录 Web 开发、开源项目与 UI 设计笔记。",
-      "publisher": {
-        "@type": "Person",
-        "name": "Yuer6327"
+    @media (max-width: 768px) {
+      .nav-logo-avatar {
+        width: 28px;
+        height: 28px;
       }
     }
-    </script>
+
+    .nav-logo-text {
+      font-size: 13px;
+      font-weight: 510;
+      color: var(--text-primary);
+      letter-spacing: -0.13px;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .nav-link {
+      font-size: 13px;
+      font-weight: 510;
+      color: var(--text-tertiary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+      font-feature-settings: 'cv01', 'ss03';
+      letter-spacing: -0.13px;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .nav-cta {
+      font-size: 13px;
+      font-weight: 510;
+      color: #fff;
+      background: var(--brand-indigo);
+      padding: 5px 12px;
+      border-radius: 6px;
+      transition: background 0.15s;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+
+    /* ── Hero Section ── */
+    .hero {
+      padding: 80px 0 64px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 510;
+      color: var(--text-quaternary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .hero-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green-active);
+      flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(39,166,68,0.6);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(39,166,68,0.6); }
+      50%       { opacity: 0.7; box-shadow: 0 0 12px rgba(39,166,68,0.3); }
+    }
+
+    .hero-title {
+      font-size: 48px;
+      font-weight: 510;
+      line-height: 1.00;
+      letter-spacing: -1.056px;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .hero-title span {
+      color: var(--accent-violet);
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.60;
+      letter-spacing: -0.165px;
+      color: var(--text-tertiary);
+      margin-bottom: 32px;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    /* ── Section ── */
+    .section {
+      padding: 48px 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .section-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 510;
+      color: var(--text-quaternary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    /* ── Link Cards ── */
+    .link-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      cursor: pointer;
+    }
+
+    .link-card:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: var(--border-standard);
+      transform: translateY(-1px);
+    }
+
+    .link-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .link-card-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .link-card-label {
+      font-size: 14px;
+      font-weight: 510;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      font-feature-settings: 'cv01', 'ss03';
+      letter-spacing: -0.182px;
+    }
+
+    .link-card-url {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-quaternary);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .link-card-arrow {
+      flex-shrink: 0;
+      color: var(--text-quaternary);
+      transition: color 0.15s, transform 0.15s;
+      font-size: 14px;
+    }
+
+    .link-card:hover .link-card-arrow {
+      color: var(--text-tertiary);
+      transform: translateX(2px);
+    }
+
+    .link-card:hover .link-card-label {
+      color: var(--text-primary);
+    }
+
+    /* email copy feedback */
+    .link-card.email-card {
+      cursor: pointer;
+    }
+
+    .copy-badge {
+      font-size: 11px;
+      font-weight: 510;
+      color: var(--green-active);
+      background: rgba(39,166,68,0.1);
+      border: 1px solid rgba(39,166,68,0.2);
+      border-radius: 4px;
+      padding: 2px 7px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-badge.show { opacity: 1; }
+
+    /* ── Posts ── */
+    .post-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .post-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+      cursor: pointer;
+    }
+
+    .post-item:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: var(--border-standard);
+      transform: translateY(-1px);
+    }
+
+    .post-num {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-subtle);
+      font-size: 10px;
+      font-weight: 510;
+      color: var(--text-quaternary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .post-body { flex: 1; min-width: 0; }
+
+    .post-title {
+      font-size: 15px;
+      font-weight: 510;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      letter-spacing: -0.165px;
+      font-feature-settings: 'cv01', 'ss03';
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post-item:hover .post-title { color: var(--text-primary); }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .post-date {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-quaternary);
+      font-family: var(--font-mono);
+    }
+
+    .post-desc {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-quaternary);
+      letter-spacing: -0.13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .post-arrow {
+      flex-shrink: 0;
+      color: var(--text-quaternary);
+      font-size: 14px;
+      transition: color 0.15s, transform 0.15s;
+      margin-top: 2px;
+    }
+
+    .post-item:hover .post-arrow {
+      color: var(--accent-violet);
+      transform: translateX(2px);
+    }
+
+    /* Loading state */
+    .posts-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 16px;
+      color: var(--text-quaternary);
+      font-size: 13px;
+      font-weight: 510;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-top-color: var(--accent-violet);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .posts-error {
+      padding: 16px;
+      font-size: 13px;
+      color: var(--text-quaternary);
+      font-feature-settings: 'cv01', 'ss03';
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 32px 0 40px;
+      margin-top: 8px;
+    }
+
+    .footer-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-quaternary);
+      letter-spacing: -0.13px;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-link {
+      font-size: 12px;
+      font-weight: 510;
+      color: var(--text-quaternary);
+      padding: 4px 8px;
+      border-radius: 5px;
+      transition: color 0.15s, background 0.15s;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .footer-link:hover {
+      color: var(--text-tertiary);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* ── Pill badge ── */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 510;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid var(--border-solid);
+      border-radius: 9999px;
+      padding: 2px 10px 2px 5px;
+      font-feature-settings: 'cv01', 'ss03';
+    }
+
+    .pill-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-violet);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero-title { font-size: 36px; letter-spacing: -0.8px; }
+      .hero { padding: 56px 0 48px; }
+      .section { padding: 36px 0; }
+      .nav-link { display: none; }
+      .post-desc { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Separator dot ── */
+    .sep {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--border-solid);
+      flex-shrink: 0;
+    }
+  </style>
 </head>
-<!-- 初始没有任何 theme class，背景为 CSS 定义的 #202020 -->
 <body>
+  <div class="glow-orb"></div>
 
-    <!-- 开场动画层 -->
-    <div id="intro-layer">
-        <svg id="intro-svg" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid meet">
-            <text x="50%" y="60%" text-anchor="middle" dominant-baseline="middle" class="intro-text-path">Yuer6327</text>
-        </svg>
-    </div>
+  <!-- NAV -->
+  <header>
+    <nav class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="https://blog.yuer6327.top/favicon/gravatar.png" alt="Yuer6327" class="nav-logo-avatar">
+        <span class="nav-logo-text">Yuer6327</span>
+      </a>
 
-    <!-- 主题切换按钮 -->
-    <div class="theme-toggle content-hidden" id="themeToggle" aria-label="切换主题">
-        <!-- 太阳图标 (默认显示) -->
-        <svg class="theme-icon sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <!-- 月亮图标 (暗色主题时显示) -->
-        <svg class="theme-icon moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    </div>
+      <div class="nav-links">
+        <a href="https://blog.yuer6327.top" class="nav-link" target="_blank" rel="noopener">博客</a>
+        <a href="https://github.com/Yuer6327" class="nav-link" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://blog.yuer6327.top" class="nav-cta" target="_blank" rel="noopener">访问博客 →</a>
+      </div>
+    </nav>
+  </header>
 
-    <!-- 主容器 -->
-    <div class="container">
-        <!-- 移除了头像 -->
-        
-        <!-- 标题占位符：SVG最终会移动到这里 -->
-        <h1 id="title-placeholder">Yuer6327</h1>
-        
-        <!-- 简介 -->
-        <p class="bio content-hidden">——精彩的人生就是无休止地折腾。</p>
+  <!-- MAIN -->
+  <main>
+    <div class="page-wrapper">
 
-        <!-- 链接卡片 -->
-        <div class="glass-card content-hidden">
-            <h2 class="card-title">Personal Links</h2>
-            <div class="links-row">
-                <a href="https://x.com/yuer6327" class="glass-button" target="_blank">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    <span class="card-text">X (Twitter)</span>
-                    <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
-                </a>
-                <a href="https://github.com/Yuer6327" class="glass-button" target="_blank">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.398.1 2.651.64.699 1.028 1.597 1.028 2.688 0 3.848-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12c0-5.523-4.477-10-10-10z"/></svg>
-                    <span class="card-text">Github</span>
-                    <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
-                </a>
-                <a href="mailto:Tom_2782587337@outlook.com" class="glass-button" target="_blank">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                    <span class="card-text">Outlook</span>
-                    <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
-                </a>
+      <!-- HERO -->
+      <section class="hero reveal">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-dot"></div>
+          Personal Blog
+        </div>
+        <h1 class="hero-title">
+          Yuer<span>6327</span>
+        </h1>
+        <p class="hero-subtitle">
+          精彩的人生就是无休止地折腾。
+        </p>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="pill"><span class="pill-dot"></span>项目开发</span>
+          <span class="pill"><span class="pill-dot"></span>设计笔记</span>
+          <span class="pill"><span class="pill-dot"></span>折腾日常</span>
+        </div>
+      </section>
+
+      <!-- PERSONAL LINKS -->
+      <section class="section reveal" style="transition-delay:0.05s">
+        <div class="section-header">
+          <span class="section-icon">🔗</span>
+          <span class="section-title">Personal Links</span>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="link-grid">
+          <a href="https://x.com/yuer6327" class="link-card" target="_blank" rel="noopener">
+            <div class="link-card-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#f7f8f8" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25Zm-1.16 17.52h1.833L7.084 4.126H5.117L17.084 19.77Z"/>
+              </svg>
             </div>
-        </div>
-
-        <div class="glass-card content-hidden">
-            <h2 class="card-title">Site & Projects</h2>
-            <div class="links-row">
-                <a href="https://blog.yuer6327.top" class="glass-button" target="_blank">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-                    <span class="card-text">Blog</span>
-                    <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
-                </a>
-                <a href="https://photo.yuer6327.top/" class="glass-button" target="_blank">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
-                    <span class="card-text">PhotoFall</span>
-                    <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
-                </a>
-                <a href="https://project.mkliu.top" class="glass-button" target="_blank">
-                    <svg class="card-icon" viewBox="0 0 24 24"><path d="M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z"/></svg>
-                    <span class="card-text">Project</span>
-                    <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"/></svg>
-                </a>
+            <div class="link-card-body">
+              <div class="link-card-label">X (Twitter)</div>
+              <div class="link-card-url">x.com/yuer6327</div>
             </div>
+            <span class="link-card-arrow">↗</span>
+          </a>
+
+          <a href="https://github.com/Yuer6327" class="link-card" target="_blank" rel="noopener">
+            <div class="link-card-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#f7f8f8" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
+              </svg>
+            </div>
+            <div class="link-card-body">
+              <div class="link-card-label">GitHub</div>
+              <div class="link-card-url">github.com/Yuer6327</div>
+            </div>
+            <span class="link-card-arrow">↗</span>
+          </a>
+
+          <div class="link-card email-card" id="emailCard" onclick="copyEmail()">
+            <div class="link-card-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </div>
+            <div class="link-card-body">
+              <div class="link-card-label">Outlook</div>
+              <div class="link-card-url">Tom_2782587337@outlook.com</div>
+            </div>
+            <span class="copy-badge" id="copyBadge">已复制</span>
+            <span class="link-card-arrow" id="emailArrow">⎘</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SITE & PROJECTS -->
+      <section class="section reveal" style="transition-delay:0.10s">
+        <div class="section-header">
+          <span class="section-icon">🛠️</span>
+          <span class="section-title">Site &amp; Projects</span>
+          <div class="section-line"></div>
         </div>
 
-        <div class="footer content-hidden">
-            <p>本页面所有项目为个人兴趣之作 😋<br>
-            Copyright © 2026 By <a href="mailto:Tom_2782587337@outlook.com">Yuer6327</a><br><br></p>
+        <div class="link-grid">
+          <a href="https://blog.yuer6327.top" class="link-card" target="_blank" rel="noopener">
+            <div class="link-card-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </div>
+            <div class="link-card-body">
+              <div class="link-card-label">Blog</div>
+              <div class="link-card-url">blog.yuer6327.top</div>
+            </div>
+            <span class="link-card-arrow">↗</span>
+          </a>
+
+          <a href="https://photo.yuer6327.top/" class="link-card" target="_blank" rel="noopener">
+            <div class="link-card-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <div class="link-card-body">
+              <div class="link-card-label">PhotoFall</div>
+              <div class="link-card-url">photo.yuer6327.top</div>
+            </div>
+            <span class="link-card-arrow">↗</span>
+          </a>
+
+          <a href="https://project.mkliu.top" class="link-card" target="_blank" rel="noopener">
+            <div class="link-card-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                <polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+              </svg>
+            </div>
+            <div class="link-card-body">
+              <div class="link-card-label">Project</div>
+              <div class="link-card-url">project.mkliu.top</div>
+            </div>
+            <span class="link-card-arrow">↗</span>
+          </a>
         </div>
+      </section>
+
+      <!-- LATEST POSTS -->
+      <section class="section reveal" style="transition-delay:0.15s">
+        <div class="section-header">
+          <span class="section-icon">📃</span>
+          <span class="section-title">Latest Posts</span>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="post-list" id="postList">
+          <div class="posts-loading">
+            <div class="spinner"></div>
+            正在获取最新文章…
+          </div>
+        </div>
+
+        <div style="margin-top:16px;text-align:right;">
+          <a href="https://blog.yuer6327.top" target="_blank" rel="noopener"
+             style="font-size:13px;font-weight:510;color:var(--text-quaternary);letter-spacing:-0.13px;font-feature-settings:'cv01','ss03';transition:color 0.15s;"
+             onmouseover="this.style.color='var(--accent-violet)'"
+             onmouseout="this.style.color='var(--text-quaternary)'">
+            查看全部文章 →
+          </a>
+        </div>
+      </section>
+
+    </div><!-- /page-wrapper -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-copy">Copyright © 2026 By Yuer6327</span>
+      <div class="footer-links">
+        <a href="https://blog.yuer6327.top" class="footer-link" target="_blank" rel="noopener">Blog</a>
+        <a href="https://github.com/Yuer6327" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://x.com/yuer6327" class="footer-link" target="_blank" rel="noopener">X</a>
+      </div>
     </div>
+  </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- 核心动画逻辑 ---
-            
-            const introLayer = document.getElementById('intro-layer');
-            const introSvg = document.getElementById('intro-svg');
-            const titlePlaceholder = document.getElementById('title-placeholder');
-            const hiddenContent = document.querySelectorAll('.content-hidden');
-            
-            // 锁定滚动
-            document.body.style.overflow = 'hidden';
+  <script>
+    /* ── Scroll reveal ── */
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } });
+    }, { threshold: 0.05 });
+    reveals.forEach(el => io.observe(el));
 
-            // 1. 等待 SVG 绘制动画完成 (约2秒)
-            setTimeout(() => {
-                startMoveAnimation();
-            }, 2000);
+    /* ── Copy email ── */
+    function copyEmail() {
+      navigator.clipboard.writeText('Tom_2782587337@outlook.com').then(() => {
+        const badge = document.getElementById('copyBadge');
+        const arrow = document.getElementById('emailArrow');
+        badge.classList.add('show');
+        arrow.style.opacity = '0';
+        setTimeout(() => {
+          badge.classList.remove('show');
+          arrow.style.opacity = '1';
+        }, 2000);
+      }).catch(() => {
+        window.location.href = 'mailto:Tom_2782587337@outlook.com';
+      });
+    }
 
-            function startMoveAnimation() {
-                // 获取两个元素的位置信息
-                const svgRect = introSvg.getBoundingClientRect();
-                const targetRect = titlePlaceholder.getBoundingClientRect();
-                
-                // 计算变换参数
-                // 注意：目标高度较小，SVG需要缩小以适应
-                const scaleX = targetRect.width / svgRect.width;
-                const scaleY = targetRect.height / svgRect.height;
-                // 选择较小的缩放比例以保持纵横比，或者直接使用高度匹配
-                const scale = Math.min(targetRect.height / svgRect.height, targetRect.width / svgRect.width) * 1.5; // *1.5 稍微放大一点视觉效果更好
+    /* ── RSS fetch & parse ── */
+    async function loadPosts() {
+      const RSS_URL = 'https://blog.yuer6327.top/rss.xml';
+      const PROXY   = 'https://api.allorigins.win/get?url=' + encodeURIComponent(RSS_URL);
+      const container = document.getElementById('postList');
 
-                const startX = svgRect.left + svgRect.width / 2;
-                const startY = svgRect.top + svgRect.height / 2;
-                const endX = targetRect.left + targetRect.width / 2;
-                const endY = targetRect.top + targetRect.height / 2;
+      try {
+        const res  = await fetch(PROXY);
+        const json = await res.json();
+        const text = json.contents;
 
-                const deltaX = endX - startX;
-                const deltaY = endY - startY;
+        const parser = new DOMParser();
+        const xml    = parser.parseFromString(text, 'application/xml');
+        const items  = Array.from(xml.querySelectorAll('item')).slice(0, 6);
 
-                // 2. 执行移动动画 (0.7s)
-                // 先慢后快再慢 (ease-in-out)
-                introSvg.style.transition = 'transform 0.8s cubic-bezier(0.65, 0, 0.35, 1)';
-                introSvg.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
-                
-                // 3. 同时：淡出黑色背景层，淡入内容
-                // 注意：我们只让背景透明，SVG本身保留
-                introLayer.style.transition = 'background-color 0.8s ease';
-                introLayer.style.backgroundColor = 'transparent';
+        if (!items.length) throw new Error('empty');
 
-                // 触发其他内容的渐显
-                hiddenContent.forEach((el, index) => {
-                    // 稍微错开一点点时间，更有层次感
-                    setTimeout(() => {
-                        el.classList.add('content-visible');
-                    }, index * 50); 
-                });
+        container.innerHTML = '';
 
-                // 初始化主题（此时应用用户设置的主题色）
-                initTheme();
+        items.forEach((item, i) => {
+          const title   = item.querySelector('title')?.textContent?.trim() || '无标题';
+          const link    = item.querySelector('link')?.textContent?.trim() || '#';
+          const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
+          const desc    = item.querySelector('description')?.textContent?.replace(/<[^>]*>/g,'').trim().slice(0,80) || '';
 
-                // 4. 动画结束后的清理 (0.8s后)
-                setTimeout(() => {
-                    document.body.style.overflow = ''; // 恢复滚动
-                    // 将SVG层级调整，以免遮挡
-                    introLayer.style.zIndex = '1'; 
-                    // 此时 SVG 仍然是 fixed 定位，但视觉上在标题位置
-                    // 在移动端窗口大小改变时可能会错位，这里做一个简单的修正监听
-                    window.addEventListener('resize', () => {
-                        // 重新计算位置逻辑（简化版：重新加载或简单的CSS重置）
-                        // 为保持简单，这里不做复杂重计算，CSS中的will-change已优化性能
-                    });
-                }, 800);
-            }
+          const dateStr = pubDate
+            ? new Date(pubDate).toLocaleDateString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit' })
+            : '';
 
-            // --- 主题逻辑 ---
-            const themeToggle = document.getElementById('themeToggle');
-
-            function applyTheme(theme) {
-                document.body.classList.add('loaded'); // 标记已加载，启用主题CSS
-                if (theme === 'dark') {
-                    document.body.classList.remove('light-theme');
-                    document.body.classList.add('dark-theme');
-                } else {
-                    document.body.classList.remove('dark-theme');
-                    document.body.classList.add('light-theme');
-                }
-            }
-
-            function initTheme() {
-                const savedTheme = localStorage.getItem('theme');
-                if (savedTheme) {
-                    applyTheme(savedTheme);
-                } else {
-                    // 默认使用暗色主题而不是根据设备偏好设置
-                    applyTheme('dark');
-                }
-            }
-
-            function toggleTheme() {
-                const isDark = document.body.classList.contains('dark-theme');
-                const newTheme = isDark ? 'light' : 'dark';
-                applyTheme(newTheme);
-                localStorage.setItem('theme', newTheme);
-            }
-
-            themeToggle.addEventListener('click', function(event) {
-                if (!document.startViewTransition) {
-                    toggleTheme();
-                    return;
-                }
-                const x = event.clientX;
-                const y = event.clientY;
-                document.documentElement.style.setProperty('--x', x + 'px');
-                document.documentElement.style.setProperty('--y', y + 'px');
-                document.startViewTransition(() => {
-                    toggleTheme();
-                });
-            });
+          const el = document.createElement('a');
+          el.href   = link;
+          el.target = '_blank';
+          el.rel    = 'noopener';
+          el.className = 'post-item';
+          el.innerHTML = `
+            <div class="post-num">${i + 1}</div>
+            <div class="post-body">
+              <div class="post-title">${escHtml(title)}</div>
+              <div class="post-meta">
+                <span class="post-date">${escHtml(dateStr)}</span>
+                ${desc ? `<span class="sep"></span><span class="post-desc">${escHtml(desc)}</span>` : ''}
+              </div>
+            </div>
+            <span class="post-arrow">↗</span>
+          `;
+          container.appendChild(el);
         });
-    </script>
+
+      } catch (err) {
+        container.innerHTML = `
+          <div class="posts-error">
+            <span style="color:var(--text-quaternary)">⚠</span>
+            <span>暂时无法获取文章，请访问 <a href="https://blog.yuer6327.top" target="_blank" rel="noopener"
+              style="color:var(--accent-violet);text-decoration:underline;text-underline-offset:3px;">blog.yuer6327.top</a> 查看。</span>
+          </div>`;
+      }
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+
+    loadPosts();
+  </script>
 </body>
 </html>
