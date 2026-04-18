@@ -866,16 +866,21 @@
     /* ── RSS fetch & parse ── */
     async function loadPosts() {
       const RSS_URL = 'https://blog.yuer6327.top/rss.xml';
-      const PROXY   = 'https://api.allorigins.win/get?url=' + encodeURIComponent(RSS_URL);
       const container = document.getElementById('postList');
-
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+  
       try {
-        const res  = await fetch(PROXY);
-        const json = await res.json();
-        const text = json.contents;
-
+        const res = await fetch(RSS_URL, { 
+          signal: controller.signal,
+          headers: { 'Accept': 'application/xml' }
+        });
+    
+        const text = await res.text();
         const parser = new DOMParser();
-        const xml    = parser.parseFromString(text, 'application/xml');
+        const xml = parser.parseFromString(text, 'application/xml');
+        const parseError = xml.querySelector('parsererror');
+        if (parseError) throw new Error('XML 解析失败: ' + parseError.textContent);
         const items  = Array.from(xml.querySelectorAll('item')).slice(0, 6);
 
         if (!items.length) throw new Error('empty');
@@ -918,6 +923,8 @@
             <span>暂时无法获取文章，请访问 <a href="https://blog.yuer6327.top" target="_blank" rel="noopener"
               style="color:var(--accent-violet);text-decoration:underline;text-underline-offset:3px;">blog.yuer6327.top</a> 查看。</span>
           </div>`;
+      } finally {
+        clearTimeout(timeout); 
       }
     }
 
