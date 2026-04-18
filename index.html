@@ -60,10 +60,10 @@
       --text-tertiary:   #8a8f98;
       --text-quaternary: #62666d;
 
-      /* Brand */
-      --brand-indigo:  #5e6ad2;
-      --accent-violet: #7170ff;
-      --accent-hover:  #828fff;
+      /* Brand - 已更换为 Hue 172 暗绿色系 */
+      --brand-teal:   #3cc9b5;
+      --accent-teal:  #4df0df;
+      --accent-hover: #5af3e3;
 
       /* Borders */
       --border-subtle:   rgba(255,255,255,0.05);
@@ -110,13 +110,13 @@
       opacity: 0.6;
     }
 
-    /* ── Radial glow ── */
+    /* ── Radial glow ── 已更换为绿色 */
     .glow-orb {
       position: fixed;
       width: 600px;
       height: 600px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(94,106,210,0.07) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(60,201,181,0.07) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
       top: -100px;
@@ -213,8 +213,8 @@
     .nav-cta {
       font-size: 13px;
       font-weight: 510;
-      color: #fff;
-      background: var(--brand-indigo);
+      color: #08090a;
+      background: var(--brand-teal);
       padding: 5px 12px;
       border-radius: 6px;
       transition: background 0.15s;
@@ -223,7 +223,7 @@
 
     .nav-cta:hover {
       background: var(--accent-hover);
-      color: #fff;
+      color: #08090a;
     }
 
     /* ── Hero Section ── */
@@ -270,7 +270,7 @@
     }
 
     .hero-title span {
-      color: var(--accent-violet);
+      color: var(--accent-teal);
     }
 
     .hero-subtitle {
@@ -509,7 +509,7 @@
     }
 
     .post-item:hover .post-arrow {
-      color: var(--accent-violet);
+      color: var(--accent-teal);
       transform: translateX(2px);
     }
 
@@ -529,7 +529,7 @@
       width: 14px;
       height: 14px;
       border: 1.5px solid rgba(255,255,255,0.08);
-      border-top-color: var(--accent-violet);
+      border-top-color: var(--accent-teal);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
@@ -612,7 +612,7 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: var(--accent-violet);
+      background: var(--accent-teal);
     }
 
     /* ── Responsive ── */
@@ -816,7 +816,7 @@
         <div style="margin-top:16px;text-align:right;">
           <a href="https://blog.yuer6327.top" target="_blank" rel="noopener"
              style="font-size:13px;font-weight:510;color:var(--text-quaternary);letter-spacing:-0.13px;font-feature-settings:'cv01','ss03';transition:color 0.15s;"
-             onmouseover="this.style.color='var(--accent-violet)'"
+             onmouseover="this.style.color='var(--accent-teal)'"
              onmouseout="this.style.color='var(--text-quaternary)'">
             查看全部文章 →
           </a>
@@ -920,7 +920,7 @@
           <div class="posts-error">
             <span style="color:var(--text-quaternary)">⚠</span>
             <span>暂时无法获取文章，请访问 <a href="https://blog.yuer6327.top" target="_blank" rel="noopener"
-              style="color:var(--accent-violet);text-decoration:underline;text-underline-offset:3px;">blog.yuer6327.top</a> 查看。</span>
+              style="color:var(--accent-teal);text-decoration:underline;text-underline-offset:3px;">blog.yuer6327.top</a> 查看。</span>
           </div>`;
       } finally {
         clearTimeout(timeout); 
