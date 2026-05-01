@@ -3,939 +3,895 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yuer6327 | 个人博客 - 项目开发与设计笔记</title>
+  <title>Yuer6327 | 项目开发与设计笔记</title>
   <meta name="description" content="Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。">
-    <link rel="canonical" href="https://yuer6327.top" />
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Yuer6327",
-      "url": "https://yuer6327.top",
-      "image": "https://blog.yuer6327.top/favicon/gravatar.png",
-      "sameAs": [
-        "https://github.com/Yuer6327",
-        "https://x.com/yuer6327",
-        "https://yuer6327.github.io",
-        "https://space.bilibili.com/1280938461",
-        "https://littleskin.cn/skinlib/show/313765"
-      ],
-      "description": "Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。",
-      "alumniOf": {
-        "@type": "EducationalOrganization",
-        "name": "上海市七宝中学"
-      }
-    }
-    </script>
-    <meta property="og:title" content="Yuer6327 | 个人博客-项目开发与设计笔记首页">
-    <meta property="og:description" content="Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。">
-    <meta property="og:url" content="https://yuer6327.top">
-    <meta property="og:image" content="https://blog.yuer6327.top/favicon/gravatar.png">
-    <meta property="og:type" content="profile">
-    <link rel="icon" href="https://blog.yuer6327.top/favicon/gravatar.png" type="image/x-icon">
-    <script type="text/javascript">
-      (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window, document, "clarity", "script", "wdjrwbbmhi");
-    </script>
-  <style>
-    /* ── Google Fonts: Inter Variable ── */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
-    /* ── CSS Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      /* Backgrounds */
-      --bg-marketing:  #08090a;
-      --bg-panel:      #0f1011;
-      --bg-surface:    #191a1b;
-      --bg-secondary:  #28282c;
-
-      /* Text */
-      --text-primary:    #f7f8f8;
-      --text-secondary:  #d0d6e0;
-      --text-tertiary:   #8a8f98;
-      --text-quaternary: #62666d;
-
-      /* Brand - 已更换为 Hue 172 暗绿色系 */
-      --brand-teal:   #3cc9b5;
-      --accent-teal:  #4df0df;
-      --accent-hover: #5af3e3;
-
-      /* Borders */
-      --border-subtle:   rgba(255,255,255,0.05);
-      --border-standard: rgba(255,255,255,0.08);
-      --border-solid:    #23252a;
-
-      /* Status */
-      --green-active: #27a644;
-      --green-pill:   #10b981;
-
-      /* Font */
-      --font-primary: 'Inter', 'SF Pro Display', -apple-system, system-ui, 'Segoe UI', Roboto, sans-serif;
-      --font-mono:    'ui-monospace', 'SF Mono', Menlo, monospace;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: var(--font-primary);
-      font-feature-settings: 'cv01', 'ss03';
-      background-color: var(--bg-marketing);
-      color: var(--text-primary);
-      min-height: 100vh;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: color 0.18s ease;
-    }
-
-    /* ── Noise texture overlay ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
-    }
-
-    /* ── Radial glow ── 已更换为绿色 */
-    .glow-orb {
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(60,201,181,0.07) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      filter: blur(40px);
-    }
-
-    /* ── Layout ── */
-    .page-wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ── Header / Nav ── */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(8,9,10,0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .nav-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .nav-logo-avatar {
-      width: 32px;
-      height: 32px;
-      border: none;
-      border-radius: 0;
-      display: block;
-      object-fit: contain;
-      background: transparent;
-    }
-
-    @media (max-width: 768px) {
-      .nav-logo-avatar {
-        width: 28px;
-        height: 28px;
-      }
-    }
-
-    .nav-logo-text {
-      font-size: 13px;
-      font-weight: 510;
-      color: var(--text-primary);
-      letter-spacing: -0.13px;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .nav-link {
-      font-size: 13px;
-      font-weight: 510;
-      color: var(--text-tertiary);
-      padding: 4px 10px;
-      border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
-      font-feature-settings: 'cv01', 'ss03';
-      letter-spacing: -0.13px;
-    }
-
-    .nav-link:hover {
-      color: var(--text-primary);
-      background: rgba(255,255,255,0.04);
-    }
-
-    .nav-cta {
-      font-size: 13px;
-      font-weight: 510;
-      color: #08090a;
-      background: var(--brand-teal);
-      padding: 5px 12px;
-      border-radius: 6px;
-      transition: background 0.15s;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .nav-cta:hover {
-      background: var(--accent-hover);
-      color: #08090a;
-    }
-
-    /* ── Hero Section ── */
-    .hero {
-      padding: 80px 0 64px;
-    }
-
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 510;
-      color: var(--text-quaternary);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .hero-eyebrow-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--green-active);
-      flex-shrink: 0;
-      box-shadow: 0 0 6px rgba(39,166,68,0.6);
-      animation: pulse 2.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(39,166,68,0.6); }
-      50%       { opacity: 0.7; box-shadow: 0 0 12px rgba(39,166,68,0.3); }
-    }
-
-    .hero-title {
-      font-size: 48px;
-      font-weight: 510;
-      line-height: 1.00;
-      letter-spacing: -1.056px;
-      color: var(--text-primary);
-      margin-bottom: 16px;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .hero-title span {
-      color: var(--accent-teal);
-    }
-
-    .hero-subtitle {
-      font-size: 18px;
-      font-weight: 400;
-      line-height: 1.60;
-      letter-spacing: -0.165px;
-      color: var(--text-tertiary);
-      margin-bottom: 32px;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    /* ── Section ── */
-    .section {
-      padding: 48px 0;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-
-    .section-icon {
-      font-size: 16px;
-      line-height: 1;
-    }
-
-    .section-title {
-      font-size: 13px;
-      font-weight: 510;
-      color: var(--text-quaternary);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .section-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border-subtle);
-    }
-
-    /* ── Link Cards ── */
-    .link-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .link-card {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.15s, border-color 0.15s, transform 0.15s;
-      cursor: pointer;
-    }
-
-    .link-card:hover {
-      background: rgba(255,255,255,0.04);
-      border-color: var(--border-standard);
-      transform: translateY(-1px);
-    }
-
-    .link-card-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 14px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .link-card-body {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .link-card-label {
-      font-size: 14px;
-      font-weight: 510;
-      color: var(--text-secondary);
-      line-height: 1.4;
-      font-feature-settings: 'cv01', 'ss03';
-      letter-spacing: -0.182px;
-    }
-
-    .link-card-url {
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--text-quaternary);
-      font-family: var(--font-mono);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 2px;
-    }
-
-    .link-card-arrow {
-      flex-shrink: 0;
-      color: var(--text-quaternary);
-      transition: color 0.15s, transform 0.15s;
-      font-size: 14px;
-    }
-
-    .link-card:hover .link-card-arrow {
-      color: var(--text-tertiary);
-      transform: translateX(2px);
-    }
-
-    .link-card:hover .link-card-label {
-      color: var(--text-primary);
-    }
-
-    /* email copy feedback */
-    .link-card.email-card {
-      cursor: pointer;
-    }
-
-    .copy-badge {
-      font-size: 11px;
-      font-weight: 510;
-      color: var(--green-active);
-      background: rgba(39,166,68,0.1);
-      border: 1px solid rgba(39,166,68,0.2);
-      border-radius: 4px;
-      padding: 2px 7px;
-      opacity: 0;
-      transition: opacity 0.2s;
-      white-space: nowrap;
-    }
-
-    .copy-badge.show { opacity: 1; }
-
-    /* ── Posts ── */
-    .post-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .post-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 14px 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.15s, border-color 0.15s, transform 0.15s;
-      cursor: pointer;
-    }
-
-    .post-item:hover {
-      background: rgba(255,255,255,0.04);
-      border-color: var(--border-standard);
-      transform: translateY(-1px);
-    }
-
-    .post-num {
-      flex-shrink: 0;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border-subtle);
-      font-size: 10px;
-      font-weight: 510;
-      color: var(--text-quaternary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 1px;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .post-body { flex: 1; min-width: 0; }
-
-    .post-title {
-      font-size: 15px;
-      font-weight: 510;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      letter-spacing: -0.165px;
-      font-feature-settings: 'cv01', 'ss03';
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .post-item:hover .post-title { color: var(--text-primary); }
-
-    .post-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .post-date {
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--text-quaternary);
-      font-family: var(--font-mono);
-    }
-
-    .post-desc {
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--text-quaternary);
-      letter-spacing: -0.13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .post-arrow {
-      flex-shrink: 0;
-      color: var(--text-quaternary);
-      font-size: 14px;
-      transition: color 0.15s, transform 0.15s;
-      margin-top: 2px;
-    }
-
-    .post-item:hover .post-arrow {
-      color: var(--accent-teal);
-      transform: translateX(2px);
-    }
-
-    /* Loading state */
-    .posts-loading {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 20px 16px;
-      color: var(--text-quaternary);
-      font-size: 13px;
-      font-weight: 510;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .spinner {
-      width: 14px;
-      height: 14px;
-      border: 1.5px solid rgba(255,255,255,0.08);
-      border-top-color: var(--accent-teal);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .posts-error {
-      padding: 16px;
-      font-size: 13px;
-      color: var(--text-quaternary);
-      font-feature-settings: 'cv01', 'ss03';
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 32px 0 40px;
-      margin-top: 8px;
-    }
-
-    .footer-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .footer-copy {
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--text-quaternary);
-      letter-spacing: -0.13px;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .footer-links {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .footer-link {
-      font-size: 12px;
-      font-weight: 510;
-      color: var(--text-quaternary);
-      padding: 4px 8px;
-      border-radius: 5px;
-      transition: color 0.15s, background 0.15s;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .footer-link:hover {
-      color: var(--text-tertiary);
-      background: rgba(255,255,255,0.03);
-    }
-
-    /* ── Pill badge ── */
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      font-weight: 510;
-      color: var(--text-secondary);
-      background: transparent;
-      border: 1px solid var(--border-solid);
-      border-radius: 9999px;
-      padding: 2px 10px 2px 5px;
-      font-feature-settings: 'cv01', 'ss03';
-    }
-
-    .pill-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--accent-teal);
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 600px) {
-      .hero-title { font-size: 36px; letter-spacing: -0.8px; }
-      .hero { padding: 56px 0 48px; }
-      .section { padding: 36px 0; }
-      .nav-link { display: none; }
-      .post-desc { display: none; }
-    }
-
-    @media (max-width: 768px) {
-      .footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
-    }
-
-    /* ── Scroll reveal ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.45s ease, transform 0.45s ease;
-    }
-    .reveal.in-view {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ── Separator dot ── */
-    .sep {
-      width: 3px;
-      height: 3px;
-      border-radius: 50%;
-      background: var(--border-solid);
-      flex-shrink: 0;
-    }
-  </style>
+  <link rel="canonical" href="https://yuer6327.top" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Yuer6327",
+    "url": "https://yuer6327.top",
+    "image": "https://blog.yuer6327.top/favicon/gravatar.png",
+    "sameAs": [
+      "https://github.com/Yuer6327",
+      "https://x.com/yuer6327",
+      "https://yuer6327.github.io",
+      "https://space.bilibili.com/1280938461",
+      "https://littleskin.cn/skinlib/show/313765"
+    ],
+    "description": "Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。",
+    "alumniOf": {
+      "@type": "EducationalOrganization",
+      "name": "上海市七宝中学"
+    }
+  }
+  </script>
+  <meta property="og:title" content="Yuer6327 | 项目开发与设计笔记">
+  <meta property="og:description" content="Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。">
+  <meta property="og:url" content="https://yuer6327.top">
+  <meta property="og:image" content="https://blog.yuer6327.top/favicon/gravatar.png">
+  <meta property="og:type" content="profile">
+  <link rel="icon" href="https://blog.yuer6327.top/favicon/gravatar.png" type="image/x-icon">
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "wdjrwbbmhi");
+  </script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5/index.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/lxgw-wenkai-mono@1/index.min.css" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --accent: #018574;
+  --accent-dim: #015e52;
+  --accent-glow: rgba(1, 133, 116, 0.15);
+  --bg: #0a0a0a;
+  --bg-card: #111111;
+  --bg-card-hover: #161616;
+  --border: #1e1e1e;
+  --border-hover: #2a2a2a;
+  --text-primary: #e8e8e8;
+  --text-secondary: #888888;
+  --text-dim: #555555;
+  --icon-fill: #c8c8c8;
+  --mono: 'JetBrains Mono Variable', 'LXGW WenKai Mono Variable', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Noise overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: url("image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Grid background */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image:
+    linear-gradient(rgba(1,133,116,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(1,133,116,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+/* Container */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Header */
+.header {
+  padding: 4rem 0 0;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards;
+  animation-delay: 0.1s;
+}
+
+.header-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.header-line .marker {
+  color: var(--accent);
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.site-title {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.site-title .accent {
+  color: var(--accent);
+}
+
+.hero {
+  padding: 3rem 0 4rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards;
+  animation-delay: 0.3s;
+}
+
+.hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.hero .tagline {
+  font-size: 15px;
+  color: var(--text-secondary);
+  border-left: 2px solid var(--accent);
+  padding-left: 1rem;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.hero .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.section:nth-child(1) { animation-delay: 0.5s; }
+.section:nth-child(2) { animation-delay: 0.65s; }
+.section:nth-child(3) { animation-delay: 0.8s; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header .section-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.section-header .section-title {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.section-header .section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* Link Grid */
+.link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.link-card {
+  background: var(--bg-card);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.link-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s ease;
+}
+
+.link-card:hover::before {
+  transform: scaleY(1);
+}
+
+.link-card:hover {
+  background: var(--bg-card-hover);
+}
+
+.link-card-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  transition: border-color 0.25s ease;
+}
+
+.link-card:hover .link-card-icon {
+  border-color: var(--accent);
+}
+
+.link-card-icon svg {
+  width: 15px;
+  height: 15px;
+  transition: all 0.25s ease;
+}
+
+.link-card-icon svg path,
+.link-card-icon svg rect,
+.link-card-icon svg circle,
+.link-card-icon svg polyline,
+.link-card-icon svg polygon,
+.link-card-icon svg line {
+  transition: all 0.25s ease;
+}
+
+.link-card:hover .link-card-icon svg path[fill],
+.link-card:hover .link-card-icon svg rect[fill],
+.link-card:hover .link-card-icon svg polygon[fill] {
+  fill: var(--accent);
+}
+
+.link-card:hover .link-card-icon svg path[stroke],
+.link-card:hover .link-card-icon svg rect[stroke],
+.link-card:hover .link-card-icon svg circle[stroke],
+.link-card:hover .link-card-icon svg polyline[stroke],
+.link-card:hover .link-card-icon svg polygon[stroke],
+.link-card:hover .link-card-icon svg line[stroke] {
+  stroke: var(--accent);
+}
+
+.link-card-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.link-card-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.link-card-url {
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-card-arrow {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-size: 14px;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.link-card:hover .link-card-arrow {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+/* Email card specific */
+.email-card {
+  cursor: pointer;
+}
+
+.copy-badge {
+  font-size: 10px;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  padding: 0.15rem 0.5rem;
+  opacity: 0;
+  transform: translateX(5px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  position: absolute;
+  right: 1.25rem;
+}
+
+.copy-badge.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.email-card .link-card-arrow {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+/* Posts */
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.post-item {
+  background: var(--bg-card);
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 1rem;
+  align-items: start;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.post-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.post-item:hover::before {
+  width: 100%;
+}
+
+.post-item:hover {
+  background: var(--bg-card-hover);
+}
+
+.post-date {
+  font-size: 11px;
+  color: var(--text-dim);
+  padding-top: 0.15rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-content .post-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+  transition: color 0.2s ease;
+}
+
+.post-item:hover .post-title {
+  color: var(--accent);
+}
+
+.post-content .post-excerpt {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-tag {
+  font-size: 10px;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  padding: 0.15rem 0.5rem;
+  white-space: nowrap;
+  align-self: start;
+  margin-top: 0.1rem;
+}
+
+/* Loading */
+.posts-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
+}
+
+/* Footer */
+.footer {
+  padding: 3rem 0 4rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+  animation-delay: 1s;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-left {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.footer-left a {
+  color: var(--accent);
+}
+
+.footer-right {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 1rem 0;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+  .header { padding: 2.5rem 0 0; }
+  .hero { padding: 2rem 0 3rem; }
+  .link-grid {
+    grid-template-columns: 1fr;
+  }
+  .post-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .post-tag {
+    justify-self: start;
+  }
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>
 </head>
 <body>
-  <div class="glow-orb"></div>
 
-  <!-- NAV -->
-  <header>
-    <nav class="nav-inner">
-      <a href="/" class="nav-logo">
-        <img src="https://blog.yuer6327.top/favicon/gravatar.png" alt="Yuer6327" class="nav-logo-avatar">
-        <span class="nav-logo-text">Yuer6327</span>
-      </a>
+<div class="container">
 
-      <div class="nav-links">
-        <a href="https://blog.yuer6327.top" class="nav-link" target="_blank" rel="noopener">博客</a>
-        <a href="https://github.com/Yuer6327" class="nav-link" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://blog.yuer6327.top" class="nav-cta" target="_blank" rel="noopener">访问博客 →</a>
-      </div>
-    </nav>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-line">
+      <span class="marker">&#10022;</span>
+      <span class="site-title"><span class="accent">yuer6327</span> / blog</span>
+    </div>
   </header>
 
-  <!-- MAIN -->
-  <main>
-    <div class="page-wrapper">
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Yuer6327</h1>
+    <p class="tagline">精彩的人生就是无休止地折腾。</p>
+    <div class="status">
+      <span class="status-dot"></span>
+      <span>Shanghai, China — <span id="current-time"></span></span>
+    </div>
+  </section>
 
-      <!-- HERO -->
-      <section class="hero reveal">
-        <div class="hero-eyebrow">
-          <div class="hero-eyebrow-dot"></div>
-          Personal Blog
+  <div class="divider"></div>
+
+  <!-- Personal Links -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">🔗</span>
+      <span class="section-title">Personal Links</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="link-grid">
+      <a href="https://x.com/yuer6327" class="link-card" target="_blank" rel="noopener">
+        <div class="link-card-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#c8c8c8" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25Zm-1.16 17.52h1.833L7.084 4.126H5.117L17.084 19.77Z"/>
+          </svg>
         </div>
-        <h1 class="hero-title">
-          Yuer<span>6327</span>
-        </h1>
-        <p class="hero-subtitle">
-          精彩的人生就是无休止地折腾。
-        </p>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span class="pill"><span class="pill-dot"></span>项目开发</span>
-          <span class="pill"><span class="pill-dot"></span>设计笔记</span>
-          <span class="pill"><span class="pill-dot"></span>折腾日常</span>
+        <div class="link-card-body">
+          <div class="link-card-label">X (Twitter)</div>
+          <div class="link-card-url">x.com/yuer6327</div>
         </div>
-      </section>
+        <span class="link-card-arrow">↗</span>
+      </a>
 
-      <!-- PERSONAL LINKS -->
-      <section class="section reveal" style="transition-delay:0.05s">
-        <div class="section-header">
-          <span class="section-icon">🔗</span>
-          <span class="section-title">Personal Links</span>
-          <div class="section-line"></div>
+      <a href="https://github.com/Yuer6327" class="link-card" target="_blank" rel="noopener">
+        <div class="link-card-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#c8c8c8" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
+          </svg>
         </div>
-
-        <div class="link-grid">
-          <a href="https://x.com/yuer6327" class="link-card" target="_blank" rel="noopener">
-            <div class="link-card-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#f7f8f8" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25Zm-1.16 17.52h1.833L7.084 4.126H5.117L17.084 19.77Z"/>
-              </svg>
-            </div>
-            <div class="link-card-body">
-              <div class="link-card-label">X (Twitter)</div>
-              <div class="link-card-url">x.com/yuer6327</div>
-            </div>
-            <span class="link-card-arrow">↗</span>
-          </a>
-
-          <a href="https://github.com/Yuer6327" class="link-card" target="_blank" rel="noopener">
-            <div class="link-card-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="#f7f8f8" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
-              </svg>
-            </div>
-            <div class="link-card-body">
-              <div class="link-card-label">GitHub</div>
-              <div class="link-card-url">github.com/Yuer6327</div>
-            </div>
-            <span class="link-card-arrow">↗</span>
-          </a>
-
-          <div class="link-card email-card" id="emailCard" onclick="copyEmail()">
-            <div class="link-card-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
-            </div>
-            <div class="link-card-body">
-              <div class="link-card-label">Outlook</div>
-              <div class="link-card-url">Tom_2782587337@outlook.com</div>
-            </div>
-            <span class="copy-badge" id="copyBadge">已复制</span>
-            <span class="link-card-arrow" id="emailArrow">⎘</span>
-          </div>
+        <div class="link-card-body">
+          <div class="link-card-label">GitHub</div>
+          <div class="link-card-url">github.com/Yuer6327</div>
         </div>
-      </section>
+        <span class="link-card-arrow">↗</span>
+      </a>
 
-      <!-- SITE & PROJECTS -->
-      <section class="section reveal" style="transition-delay:0.10s">
-        <div class="section-header">
-          <span class="section-icon">🛠️</span>
-          <span class="section-title">Site &amp; Projects</span>
-          <div class="section-line"></div>
+      <div class="link-card email-card" id="emailCard" onclick="copyEmail()">
+        <div class="link-card-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
         </div>
-
-        <div class="link-grid">
-          <a href="https://blog.yuer6327.top" class="link-card" target="_blank" rel="noopener">
-            <div class="link-card-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-              </svg>
-            </div>
-            <div class="link-card-body">
-              <div class="link-card-label">Blog</div>
-              <div class="link-card-url">blog.yuer6327.top</div>
-            </div>
-            <span class="link-card-arrow">↗</span>
-          </a>
-
-          <a href="https://photo.yuer6327.top/" class="link-card" target="_blank" rel="noopener">
-            <div class="link-card-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-            </div>
-            <div class="link-card-body">
-              <div class="link-card-label">PhotoFall</div>
-              <div class="link-card-url">photo.yuer6327.top</div>
-            </div>
-            <span class="link-card-arrow">↗</span>
-          </a>
-
-          <a href="https://project.mkliu.top" class="link-card" target="_blank" rel="noopener">
-            <div class="link-card-icon">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f7f8f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
-                <polyline points="2 17 12 22 22 17"/>
-                <polyline points="2 12 12 17 22 12"/>
-              </svg>
-            </div>
-            <div class="link-card-body">
-              <div class="link-card-label">Project</div>
-              <div class="link-card-url">project.mkliu.top</div>
-            </div>
-            <span class="link-card-arrow">↗</span>
-          </a>
+        <div class="link-card-body">
+          <div class="link-card-label">Outlook</div>
+          <div class="link-card-url">Tom_2782587337@outlook.com</div>
         </div>
-      </section>
-
-      <!-- LATEST POSTS -->
-      <section class="section reveal" style="transition-delay:0.15s">
-        <div class="section-header">
-          <span class="section-icon">📃</span>
-          <span class="section-title">Latest Posts</span>
-          <div class="section-line"></div>
-        </div>
-
-        <div class="post-list" id="postList">
-          <div class="posts-loading">
-            <div class="spinner"></div>
-            正在获取最新文章…
-          </div>
-        </div>
-
-        <div style="margin-top:16px;text-align:right;">
-          <a href="https://blog.yuer6327.top" target="_blank" rel="noopener"
-             style="font-size:13px;font-weight:510;color:var(--text-quaternary);letter-spacing:-0.13px;font-feature-settings:'cv01','ss03';transition:color 0.15s;"
-             onmouseover="this.style.color='var(--accent-teal)'"
-             onmouseout="this.style.color='var(--text-quaternary)'">
-            查看全部文章 →
-          </a>
-        </div>
-      </section>
-
-    </div><!-- /page-wrapper -->
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <span class="footer-copy">Copyright © 2026 By Yuer6327</span>
-      <div class="footer-links">
-        <a href="https://blog.yuer6327.top" class="footer-link" target="_blank" rel="noopener">Blog</a>
-        <a href="https://github.com/Yuer6327" class="footer-link" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://x.com/yuer6327" class="footer-link" target="_blank" rel="noopener">X</a>
+        <span class="copy-badge" id="copyBadge">Copied</span>
+        <span class="link-card-arrow" id="emailArrow">Copy</span>
       </div>
+    </div>
+  </section>
+
+  <!-- Site & Projects -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">🛠️</span>
+      <span class="section-title">Site &amp; Projects</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="link-grid">
+      <a href="https://blog.yuer6327.top" class="link-card" target="_blank" rel="noopener">
+        <div class="link-card-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <div class="link-card-body">
+          <div class="link-card-label">Blog</div>
+          <div class="link-card-url">blog.yuer6327.top</div>
+        </div>
+        <span class="link-card-arrow">↗</span>
+      </a>
+
+      <a href="https://photo.yuer6327.top/" class="link-card" target="_blank" rel="noopener">
+        <div class="link-card-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <div class="link-card-body">
+          <div class="link-card-label">PhotoFall</div>
+          <div class="link-card-url">photo.yuer6327.top</div>
+        </div>
+        <span class="link-card-arrow">↗</span>
+      </a>
+
+      <a href="https://project.mkliu.top" class="link-card" target="_blank" rel="noopener">
+        <div class="link-card-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+        </div>
+        <div class="link-card-body">
+          <div class="link-card-label">Project</div>
+          <div class="link-card-url">project.mkliu.top</div>
+        </div>
+        <span class="link-card-arrow">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Latest Posts -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">📃</span>
+      <span class="section-title">Latest Posts</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="posts-list" id="posts-list">
+      <div class="posts-loading">
+        <span>正在加载文章</span><span class="loading-dots"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        Copyright © 2026 By <a href="mailto:Tom_2782587337@outlook.com">Yuer6327</a>
+      </div>
+      <div class="footer-right" id="footer-time"></div>
     </div>
   </footer>
 
-  <script>
-    /* ── Scroll reveal ── */
-    const reveals = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); } });
-    }, { threshold: 0.05 });
-    reveals.forEach(el => io.observe(el));
+</div>
 
-    /* ── Copy email ── */
-    function copyEmail() {
-      navigator.clipboard.writeText('Tom_2782587337@outlook.com').then(() => {
-        const badge = document.getElementById('copyBadge');
-        const arrow = document.getElementById('emailArrow');
-        badge.classList.add('show');
-        arrow.style.opacity = '0';
-        setTimeout(() => {
-          badge.classList.remove('show');
-          arrow.style.opacity = '1';
-        }, 2000);
-      }).catch(() => {
-        window.location.href = 'mailto:Tom_2782587337@outlook.com';
+<script>
+(function() {
+  // Time display
+  function updateTime() {
+    var now = new Date();
+    var options = { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false };
+    var timeStr = now.toLocaleTimeString('zh-CN', options);
+    var el = document.getElementById('current-time');
+    if (el) el.textContent = timeStr;
+  }
+  updateTime();
+  setInterval(updateTime, 30000);
+
+  // Footer time
+  function updateFooterTime() {
+    var now = new Date();
+    var options = { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+    var ftEl = document.getElementById('footer-time');
+    if (ftEl) ftEl.textContent = 'UTC+8 ' + now.toLocaleString('zh-CN', options);
+  }
+  updateFooterTime();
+  setInterval(updateFooterTime, 30000);
+
+  // Escape HTML
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Copy email
+  window.copyEmail = function() {
+    var email = 'Tom_2782587337@outlook.com';
+    var badge = document.getElementById('copyBadge');
+    var arrow = document.getElementById('emailArrow');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(function() {
+        showCopied(badge, arrow);
       });
+    } else {
+      var textarea = document.createElement('textarea');
+      textarea.value = email;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(textarea);
+      showCopied(badge, arrow);
     }
+  };
 
-    /* ── RSS fetch & parse ── */
-    async function loadPosts() {
-      const RSS_URL = 'https://blog.yuer6327.top/rss.xml';
-      const container = document.getElementById('postList');
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
-  
-      try {
-        const res = await fetch(RSS_URL, { 
-          signal: controller.signal,
-          headers: { 'Accept': 'application/xml' }
-        });
-    
-        const text = await res.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(text, 'application/xml');
-        const parseError = xml.querySelector('parsererror');
-        if (parseError) throw new Error('XML 解析失败: ' + parseError.textContent);
-        const items  = Array.from(xml.querySelectorAll('item')).slice(0, 6);
+  function showCopied(badge, arrow) {
+    if (badge) {
+      badge.classList.add('show');
+      setTimeout(function() { badge.classList.remove('show'); }, 2000);
+    }
+    if (arrow) {
+      var original = arrow.textContent;
+      arrow.textContent = '✓';
+      arrow.style.color = '#018574';
+      setTimeout(function() {
+        arrow.textContent = original;
+        arrow.style.color = '';
+      }, 2000);
+    }
+  }
 
-        if (!items.length) throw new Error('empty');
+  // Fetch RSS
+  async function fetchPosts() {
+    var container = document.getElementById('posts-list');
+    try {
+      var response = await fetch('https://blog.yuer6327.top/rss.xml');
+      if (!response.ok) throw new Error('Network error');
+      var xmlText = await response.text();
+      var parser = new DOMParser();
+      var xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+      var items = xmlDoc.querySelectorAll('item');
+      var posts = [];
 
-        container.innerHTML = '';
+      items.forEach(function(item) {
+        var title = item.querySelector('title')?.textContent || '无标题';
+        var link = item.querySelector('link')?.textContent || '#';
+        var pubDate = item.querySelector('pubDate')?.textContent || '';
+        var description = item.querySelector('description')?.textContent || '';
+        var contentEl = item.getElementsByTagNameNS('http://purl.org/rss/1.0/modules/content/', 'encoded')[0];
+        var content = contentEl ? (contentEl.textContent || '') : '';
 
-        items.forEach((item, i) => {
-          const title   = item.querySelector('title')?.textContent?.trim() || '无标题';
-          const link    = item.querySelector('link')?.textContent?.trim() || '#';
-          const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
-          const desc    = item.querySelector('description')?.textContent?.replace(/<[^>]*>/g,'').trim().slice(0,80) || '';
+        // Skip encrypted/password-protected posts: they have empty content:encoded
+        if (!content || content.trim().length === 0) return;
 
-          const dateStr = pubDate
-            ? new Date(pubDate).toLocaleDateString('zh-CN', { year:'numeric', month:'2-digit', day:'2-digit' })
-            : '';
+        var dateStr = '';
+        if (pubDate) {
+          var d = new Date(pubDate);
+          dateStr = d.getFullYear() + '-' +
+            String(d.getMonth() + 1).padStart(2, '0') + '-' +
+            String(d.getDate()).padStart(2, '0');
+        }
 
-          const el = document.createElement('a');
-          el.href   = link;
-          el.target = '_blank';
-          el.rel    = 'noopener';
-          el.className = 'post-item';
-          el.innerHTML = `
-            <div class="post-num">${i + 1}</div>
-            <div class="post-body">
-              <div class="post-title">${escHtml(title)}</div>
-              <div class="post-meta">
-                <span class="post-date">${escHtml(dateStr)}</span>
-                ${desc ? `<span class="sep"></span><span class="post-desc">${escHtml(desc)}</span>` : ''}
-              </div>
-            </div>
-            <span class="post-arrow">↗</span>
-          `;
-          container.appendChild(el);
-        });
+        // Extract category
+        var categories = item.querySelectorAll('category');
+        var tag = '';
+        if (categories.length > 0) {
+          tag = categories[0].textContent;
+        }
 
-      } catch (err) {
-        container.innerHTML = `
-          <div class="posts-error">
-            <span style="color:var(--text-quaternary)">⚠</span>
-            <span>暂时无法获取文章，请访问 <a href="https://blog.yuer6327.top" target="_blank" rel="noopener"
-              style="color:var(--accent-teal);text-decoration:underline;text-underline-offset:3px;">blog.yuer6327.top</a> 查看。</span>
-          </div>`;
-      } finally {
-        clearTimeout(timeout); 
+        posts.push({ title: title, link: link, dateStr: dateStr, description: description, tag: tag });
+      });
+
+      // Render posts (max 8)
+      var displayPosts = posts.slice(0, 8);
+      container.innerHTML = '';
+
+      if (displayPosts.length === 0) {
+        container.innerHTML = '<div class="posts-loading">暂无文章</div>';
+        return;
       }
-    }
 
-    function escHtml(str) {
-      return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;');
-    }
+      displayPosts.forEach(function(post, idx) {
+        var postEl = document.createElement('a');
+        postEl.href = post.link;
+        postEl.target = '_blank';
+        postEl.rel = 'noopener';
+        postEl.className = 'post-item';
+        postEl.style.opacity = '0';
+        postEl.style.animation = 'fadeUp 0.4s ease forwards';
+        postEl.style.animationDelay = (idx * 0.06) + 's';
 
-    loadPosts();
-  </script>
+        var tagHtml = '';
+        if (post.tag) {
+          tagHtml = '<span class="post-tag">' + escapeHtml(post.tag) + '</span>';
+        }
+
+        postEl.innerHTML =
+          '<span class="post-date">' + escapeHtml(post.dateStr) + '</span>' +
+          '<div class="post-content">' +
+            '<div class="post-title">' + escapeHtml(post.title) + '</div>' +
+            '<div class="post-excerpt">' + escapeHtml(post.description) + '</div>' +
+          '</div>' +
+          tagHtml;
+
+        container.appendChild(postEl);
+      });
+
+    } catch (err) {
+      container.innerHTML = '<div class="posts-loading">加载失败，请稍后重试</div>';
+      console.error('RSS fetch error:', err);
+    }
+  }
+
+  fetchPosts();
+})();
+</script>
+
 </body>
 </html>
+
