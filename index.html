@@ -41,7 +41,11 @@
     })(window, document, "clarity", "script", "wdjrwbbmhi");
   </script>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5/index.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/syne@5/index.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/chakra-petch@5/700.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@5/400.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@5/500.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@5/600.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/lxgw-wenkai-mono@1/index.min.css" rel="stylesheet">
 <style>
 *, *::before, *::after {
@@ -53,21 +57,24 @@
 :root {
   --accent: #018574;
   --accent-dim: #015e52;
-  --accent-glow: rgba(1, 133, 116, 0.15);
-  --bg: #0a0a0a;
-  --bg-card: #111111;
-  --bg-card-hover: #161616;
-  --border: #1e1e1e;
-  --border-hover: #2a2a2a;
-  --text-primary: #e8e8e8;
-  --text-secondary: #888888;
-  --text-dim: #555555;
-  --icon-fill: #c8c8c8;
-  --mono: 'JetBrains Mono Variable', 'LXGW WenKai Mono Variable', monospace;
+  --accent-ghost: rgba(1, 133, 116, 0.06);
+  --accent-glow: rgba(1, 133, 116, 0.2);
+  --accent-glow-strong: rgba(1, 133, 116, 0.35);
+  --bg: #08090a;
+  --bg-card: #0e1012;
+  --bg-card-hover: #131618;
+  --border: #1a1e21;
+  --border-hover: #252b2f;
+  --text-primary: #e8eaec;
+  --text-secondary: #7a8088;
+  --text-dim: #4a5058;
+  --display: 'Chakra Petch', 'Syne Variable', sans-serif;
+  --mono: 'IBM Plex Mono', 'LXGW WenKai Mono Variable', monospace;
 }
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -81,6 +88,10 @@ body {
   cursor: default;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body::-webkit-scrollbar {
@@ -105,8 +116,8 @@ body::after {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background-image:
-    linear-gradient(rgba(1,133,116,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(1,133,116,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(1,133,116,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(1,133,116,0.025) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
   z-index: -1;
@@ -120,271 +131,368 @@ body::after {
 a {
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.25s ease;
 }
 
 a:hover {
   color: var(--accent);
 }
 
-/* Container */
-.container {
-  max-width: 900px;
+/* ============================================================
+   DECORATIVE ACCENT LINES — Circuit-board aesthetics
+   ============================================================ */
+
+/* Top-right diagonal line */
+.deco-line-tr {
+  position: fixed;
+  top: 0;
+  right: 120px;
+  width: 1px;
+  height: 200px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  opacity: 0.12;
+  transform: rotate(-15deg);
+  transform-origin: top;
+  z-index: -1;
+}
+
+/* Bottom-left horizontal accent */
+.deco-line-bl {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 300px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+  opacity: 0.08;
+  z-index: -1;
+}
+
+/* Left vertical accent — connects header to content */
+.deco-line-left {
+  position: fixed;
+  top: 35%;
+  left: 0;
+  width: 1px;
+  height: 30%;
+  background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+  opacity: 0.1;
+  z-index: -1;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
+.page {
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
+  position: relative;
 }
 
-/* Header */
-.header {
-  padding: 4rem 0 0;
-  opacity: 0;
-  animation: fadeUp 0.8s ease forwards;
-  animation-delay: 0.1s;
-}
-
-.header-line {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
-}
-
-.header-line .marker {
-  color: var(--accent);
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.site-title {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  color: var(--text-dim);
-  text-transform: uppercase;
-}
-
-.site-title .accent {
-  color: var(--accent);
-}
+/* ============================================================
+   HERO SECTION — Massive typographic treatment
+   ============================================================ */
 
 .hero {
-  padding: 3rem 0 4rem;
-  opacity: 0;
-  animation: fadeUp 0.8s ease forwards;
-  animation-delay: 0.3s;
+  padding: 6rem 0 3rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.hero h1 {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+.hero-name {
+  font-family: var(--display);
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
   font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1;
+  letter-spacing: 0.03em;
   color: var(--text-primary);
-  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  cursor: default;
+  user-select: none;
 }
 
-.hero .tagline {
+/* Glitch accent layer */
+.hero-name::before {
+  content: 'Yuer6327';
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--accent);
+  opacity: 0;
+  clip-path: inset(0 0 0 0);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero-name:hover::before {
+  opacity: 0.5;
+  animation: glitch 0.4s ease forwards;
+}
+
+@keyframes glitch {
+  0%   { transform: translate(0, 0); clip-path: inset(20% 0 60% 0); }
+  20%  { transform: translate(-4px, 2px); clip-path: inset(50% 0 10% 0); }
+  40%  { transform: translate(3px, -1px); clip-path: inset(10% 0 70% 0); }
+  60%  { transform: translate(-2px, 3px); clip-path: inset(60% 0 20% 0); }
+  80%  { transform: translate(4px, -2px); clip-path: inset(30% 0 40% 0); }
+  100% { transform: translate(0, 0); clip-path: inset(0 0 0 0); }
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.hero-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-tagline {
   font-size: 15px;
   color: var(--text-secondary);
   border-left: 2px solid var(--accent);
   padding-left: 1rem;
   margin-bottom: 2rem;
   font-style: italic;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  animation: fadeSlideFull 0.8s ease 0.3s forwards;
 }
 
-.hero .status {
+.hero-time {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 12px;
+  gap: 8px;
+  font-size: 11px;
   color: var(--text-dim);
-  padding: 0.4rem 0.8rem;
-  border: 1px solid var(--border);
-  background: var(--bg-card);
+  letter-spacing: 0.04em;
+  opacity: 0;
+  animation: fadeSlideFull 0.8s ease 0.5s forwards;
 }
 
-.status-dot {
+.time-dot {
   width: 6px;
   height: 6px;
   background: var(--accent);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--accent-glow-strong);
 }
 
-/* Sections */
+.hero-marker {
+  font-size: 10px;
+  color: var(--accent);
+  opacity: 0.4;
+  font-variant-numeric: tabular-nums;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  opacity: 0;
+  animation: fadeSlideIn 0.8s ease 0.4s forwards;
+}
+
+/* ============================================================
+   SECTION HEADERS — Minimal with accent line
+   ============================================================ */
+
 .section {
   margin-bottom: 3rem;
-  opacity: 0;
-  animation: fadeUp 0.6s ease forwards;
 }
-
-.section:nth-child(1) { animation-delay: 0.5s; }
-.section:nth-child(2) { animation-delay: 0.65s; }
-.section:nth-child(3) { animation-delay: 0.8s; }
 
 .section-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
 }
 
-.section-header .section-icon {
-  font-size: 15px;
-  flex-shrink: 0;
-}
-
-.section-header .section-title {
-  font-size: 13px;
-  font-weight: 500;
+.section-title {
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.25em;
   color: var(--text-dim);
+  white-space: nowrap;
 }
 
-.section-header .section-line {
+.section-line {
   flex: 1;
   height: 1px;
   background: linear-gradient(90deg, var(--border), transparent);
 }
 
-/* Link Grid */
-.link-grid {
+/* ============================================================
+   LINK CARDS — 3-column grid with corner marks
+   ============================================================ */
+
+.links-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .link-card {
   background: var(--bg-card);
-  padding: 1.25rem;
+  border: 1px solid var(--border);
+  padding: 1.4rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
-.link-card::before {
+.link-card::after {
   content: '';
   position: absolute;
-  top: 0; left: 0;
-  width: 2px;
-  height: 100%;
-  background: var(--accent);
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.3s ease;
-}
-
-.link-card:hover::before {
-  transform: scaleY(1);
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
 .link-card:hover {
   background: var(--bg-card-hover);
+  border-color: var(--accent-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px var(--accent-dim);
+  color: var(--text-primary);
 }
 
-.link-card-icon {
+.link-card:hover::after {
+  opacity: 1;
+}
+
+/* Corner marks */
+.link-card .corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.link-card:hover .corner {
+  opacity: 1;
+}
+
+.corner-tl { top: 6px; left: 6px; border-top: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+.corner-tr { top: 6px; right: 6px; border-top: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+.corner-bl { bottom: 6px; left: 6px; border-bottom: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+.corner-br { bottom: 6px; right: 6px; border-bottom: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+
+/* Icon container with rotating ring */
+.link-icon {
+  position: relative;
   width: 36px;
   height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
   flex-shrink: 0;
-  transition: border-color 0.25s ease;
 }
 
-.link-card:hover .link-card-icon {
-  border-color: var(--accent);
+.link-icon-ring {
+  position: absolute;
+  inset: -3px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  transition: border-color 0.4s ease;
 }
 
-.link-card-icon svg {
+.link-card:hover .link-icon-ring {
+  border-color: var(--accent-dim);
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.link-icon svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 15px;
   height: 15px;
-  transition: all 0.25s ease;
 }
 
-.link-card-icon svg path,
-.link-card-icon svg rect,
-.link-card-icon svg circle,
-.link-card-icon svg polyline,
-.link-card-icon svg polygon,
-.link-card-icon svg line {
-  transition: all 0.25s ease;
+.link-icon svg path,
+.link-icon svg rect,
+.link-icon svg circle,
+.link-icon svg polyline,
+.link-icon svg polygon,
+.link-icon svg line {
+  transition: all 0.3s ease;
 }
 
-.link-card:hover .link-card-icon svg path[fill],
-.link-card:hover .link-card-icon svg rect[fill],
-.link-card:hover .link-card-icon svg polygon[fill] {
-  fill: var(--accent);
-}
+.link-card:hover .link-icon svg path[fill] { fill: var(--accent); }
+.link-card:hover .link-icon svg path[stroke] { stroke: var(--accent); }
+.link-card:hover .link-icon svg rect[stroke] { stroke: var(--accent); }
+.link-card:hover .link-icon svg circle[stroke] { stroke: var(--accent); }
+.link-card:hover .link-icon svg polyline[stroke] { stroke: var(--accent); }
+.link-card:hover .link-icon svg line[stroke] { stroke: var(--accent); }
 
-.link-card:hover .link-card-icon svg path[stroke],
-.link-card:hover .link-card-icon svg rect[stroke],
-.link-card:hover .link-card-icon svg circle[stroke],
-.link-card:hover .link-card-icon svg polyline[stroke],
-.link-card:hover .link-card-icon svg polygon[stroke],
-.link-card:hover .link-card-icon svg line[stroke] {
-  stroke: var(--accent);
-}
-
-.link-card-body {
+.link-text {
   min-width: 0;
   flex: 1;
 }
 
-.link-card-label {
+.link-label {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
+  letter-spacing: 0.01em;
 }
 
-.link-card-url {
+.link-url {
   font-size: 11px;
   color: var(--text-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
 }
 
-.link-card-arrow {
-  margin-left: auto;
+.link-arrow {
   color: var(--text-dim);
   font-size: 14px;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
   flex-shrink: 0;
 }
 
-.link-card:hover .link-card-arrow {
+.link-card:hover .link-arrow {
   color: var(--accent);
   transform: translateX(3px);
 }
 
-/* Email card specific */
-.email-card {
-  cursor: pointer;
-}
-
+/* Copy badge — inline, after URL text */
 .copy-badge {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--accent);
   border: 1px solid var(--accent-dim);
   padding: 0.15rem 0.5rem;
   opacity: 0;
-  transform: translateX(5px);
+  transform: translateX(4px);
   transition: all 0.3s ease;
   pointer-events: none;
-  position: absolute;
-  right: 1.25rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .copy-badge.show {
@@ -392,98 +500,290 @@ a:hover {
   transform: translateX(0);
 }
 
-.email-card .link-card-arrow {
-  font-size: 11px;
+/* ============================================================
+   PROJECT CARDS — 2x2 grid with rotating icon rings
+   ============================================================ */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  color: var(--text-primary);
+}
+
+/* Corner marks for project cards */
+.project-card .corner {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.project-card:hover .corner {
+  opacity: 1;
+}
+
+/* Rotating accent ring */
+.proj-icon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.proj-ring {
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  transition: border-color 0.4s ease;
+}
+
+.project-card:hover .proj-ring {
+  border-color: var(--accent);
+  border-style: dashed;
+  animation: spin 6s linear infinite;
+}
+
+/* Accent glow on hover */
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--accent-ghost) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.project-card:hover::before {
+  opacity: 1;
+}
+
+.proj-icon svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+}
+
+.proj-icon svg path,
+.proj-icon svg rect,
+.proj-icon svg circle,
+.proj-icon svg polyline,
+.proj-icon svg polygon,
+.proj-icon svg line {
+  transition: all 0.3s ease;
+}
+
+.project-card:hover .proj-icon svg path[stroke] { stroke: var(--accent); }
+.project-card:hover .proj-icon svg rect[stroke] { stroke: var(--accent); }
+.project-card:hover .proj-icon svg circle[stroke] { stroke: var(--accent); }
+.project-card:hover .proj-icon svg polyline[stroke] { stroke: var(--accent); }
+.project-card:hover .proj-icon svg line[stroke] { stroke: var(--accent); }
+
+.proj-text {
+  min-width: 0;
+}
+
+.proj-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
   letter-spacing: 0.02em;
 }
 
-/* Posts */
-.posts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-}
-
-.post-item {
-  background: var(--bg-card);
-  padding: 1.25rem;
-  display: grid;
-  grid-template-columns: 80px 1fr auto;
-  gap: 1rem;
-  align-items: start;
-  transition: all 0.25s ease;
-  position: relative;
-}
-
-.post-item::before {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--accent);
-  transition: width 0.4s ease;
-}
-
-.post-item:hover::before {
-  width: 100%;
-}
-
-.post-item:hover {
-  background: var(--bg-card-hover);
-}
-
-.post-date {
+.proj-url {
   font-size: 11px;
   color: var(--text-dim);
-  padding-top: 0.15rem;
-  white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
-.post-content .post-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: 0.35rem;
-  transition: color 0.2s ease;
-}
-
-.post-item:hover .post-title {
-  color: var(--accent);
-}
-
-.post-content .post-excerpt {
-  font-size: 12px;
+.proj-arrow {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
   color: var(--text-dim);
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 11px;
+  transition: all 0.3s ease;
 }
 
-.post-tag {
+.project-card:hover .proj-arrow {
+  color: var(--accent);
+  transform: translate(2px, -2px);
+}
+
+/* ============================================================
+   POSTS TIMELINE
+   ============================================================ */
+
+.timeline {
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8px;
+  width: 1px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--border) 0px,
+    var(--border) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.timeline-item {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 4px;
+  background: var(--bg-card);
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2.5rem;
+  top: 1.25rem;
+  width: 17px;
+  height: 17px;
+}
+
+.timeline-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.timeline-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 11px;
+  height: 11px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-dot::before {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow-strong);
+}
+
+.timeline-item:hover .timeline-dot::after {
+  border-color: var(--accent-dim);
+}
+
+.timeline-item:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border);
+  transform: translateX(4px);
+}
+
+.timeline-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.timeline-date {
   font-size: 10px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+.timeline-tag {
+  font-size: 9px;
   color: var(--accent);
   border: 1px solid var(--accent-dim);
-  padding: 0.15rem 0.5rem;
-  white-space: nowrap;
-  align-self: start;
-  margin-top: 0.1rem;
+  padding: 0.1rem 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* Loading */
+.timeline-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+  transition: color 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.timeline-item:hover .timeline-title {
+  color: var(--accent);
+}
+
+.timeline-excerpt {
+  font-size: 11px;
+  color: var(--text-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  letter-spacing: 0.02em;
+}
+
+/* Loading state */
 .posts-loading {
   padding: 2rem;
   text-align: center;
   color: var(--text-dim);
-  font-size: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  font-size: 11px;
+  letter-spacing: 0.06em;
 }
 
 .loading-dots::after {
@@ -492,21 +792,32 @@ a:hover {
 }
 
 @keyframes dots {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
-  75% { content: '...'; }
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
   100% { content: ''; }
 }
 
-/* Footer */
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
 .footer {
-  padding: 3rem 0 4rem;
-  border-top: 1px solid var(--border);
+  padding: 2rem 0 4rem;
   margin-top: 2rem;
-  opacity: 0;
-  animation: fadeUp 0.6s ease forwards;
-  animation-delay: 1s;
+}
+
+.footer-line {
+  width: 0;
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 2rem;
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-line.visible {
+  width: 100%;
 }
 
 .footer-inner {
@@ -520,30 +831,44 @@ a:hover {
 .footer-left {
   font-size: 11px;
   color: var(--text-dim);
+  letter-spacing: 0.04em;
 }
 
 .footer-left a {
   color: var(--accent);
+  transition: opacity 0.2s ease;
+}
+
+.footer-left a:hover {
+  opacity: 0.7;
 }
 
 .footer-right {
   font-size: 11px;
   color: var(--text-dim);
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 
-/* Divider */
-.divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-  margin: 1rem 0;
-}
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 
-/* Animations */
-@keyframes fadeUp {
+@keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 0.7;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideFull {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -553,182 +878,259 @@ a:hover {
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.3; }
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .container {
-    padding: 0 1.25rem;
+/* Scroll-reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .page {
+    padding: 0 1.5rem;
   }
-  .header { padding: 2.5rem 0 0; }
-  .hero { padding: 2rem 0 3rem; }
-  .link-grid {
-    grid-template-columns: 1fr;
+
+  .hero {
+    padding: 4rem 0 2rem;
   }
-  .post-item {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-  .post-tag {
-    justify-self: start;
-  }
-  .footer-inner {
+
+  .hero-content {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .hero-marker {
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+
+  .links-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .deco-line-tr,
+  .deco-line-left {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0 1rem;
+  }
+
+  .hero {
+    padding: 3rem 0 1.5rem;
+  }
+
+  .hero-name {
+    font-size: clamp(2rem, 10vw, 3.5rem);
+  }
+
+  .timeline {
+    padding-left: 2rem;
   }
 }
 </style>
 </head>
 <body>
 
-<div class="container">
+<!-- Decorative accent lines -->
+<div class="deco-line-tr"></div>
+<div class="deco-line-bl"></div>
+<div class="deco-line-left"></div>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-line">
-      <span class="marker">&#10022;</span>
-      <span class="site-title"><span class="accent">yuer6327</span> / blog</span>
-    </div>
-  </header>
+<div class="page">
 
-  <!-- Hero -->
+  <!-- ==================== HERO ==================== -->
   <section class="hero">
-    <h1>Yuer6327</h1>
-    <p class="tagline">精彩的人生就是无休止地折腾。</p>
-    <div class="status">
-      <span class="status-dot"></span>
-      <span>Shanghai, China — <span id="current-time"></span></span>
-    </div>
-  </section>
+    <h1 class="hero-name">Yuer6327</h1>
 
-  <div class="divider"></div>
-
-  <!-- Personal Links -->
-  <section class="section">
-    <div class="section-header">
-      <span class="section-icon">🔗</span>
-      <span class="section-title">Personal Links</span>
-      <div class="section-line"></div>
-    </div>
-    <div class="link-grid">
-      <a href="https://x.com/yuer6327" class="link-card" target="_blank" rel="noopener">
-        <div class="link-card-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="#c8c8c8" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25Zm-1.16 17.52h1.833L7.084 4.126H5.117L17.084 19.77Z"/>
-          </svg>
+    <div class="hero-content">
+      <div class="hero-left">
+        <p class="hero-tagline">精彩的人生就是无休止地折腾。</p>
+        <div class="hero-time">
+          <span class="time-dot"></span>
+          <span>Shanghai, CN — <span id="current-time"></span></span>
         </div>
-        <div class="link-card-body">
-          <div class="link-card-label">X (Twitter)</div>
-          <div class="link-card-url">x.com/yuer6327</div>
-        </div>
-        <span class="link-card-arrow">↗</span>
-      </a>
-
-      <a href="https://github.com/Yuer6327" class="link-card" target="_blank" rel="noopener">
-        <div class="link-card-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="#c8c8c8" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
-          </svg>
-        </div>
-        <div class="link-card-body">
-          <div class="link-card-label">GitHub</div>
-          <div class="link-card-url">github.com/Yuer6327</div>
-        </div>
-        <span class="link-card-arrow">↗</span>
-      </a>
-
-      <div class="link-card email-card" id="emailCard" onclick="copyEmail()">
-        <div class="link-card-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="4" width="20" height="16" rx="2"/>
-            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-          </svg>
-        </div>
-        <div class="link-card-body">
-          <div class="link-card-label">Outlook</div>
-          <div class="link-card-url">Tom_2782587337@outlook.com</div>
-        </div>
-        <span class="copy-badge" id="copyBadge">Copied</span>
-        <span class="link-card-arrow" id="emailArrow">Copy</span>
       </div>
+      <div class="hero-marker">SHANGHAI — CHINA</div>
     </div>
   </section>
 
-  <!-- Site & Projects -->
-  <section class="section">
+  <!-- ==================== PROJECTS ==================== -->
+  <section class="section reveal">
     <div class="section-header">
-      <span class="section-icon">🛠️</span>
-      <span class="section-title">Site &amp; Projects</span>
+      <span class="section-title">Projects</span>
       <div class="section-line"></div>
     </div>
-    <div class="link-grid">
-      <a href="https://blog.yuer6327.top" class="link-card" target="_blank" rel="noopener">
-        <div class="link-card-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+    <div class="projects-grid">
+      <!-- Blog -->
+      <a href="https://blog.yuer6327.top" class="project-card" target="_blank" rel="noopener">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+        <div class="proj-icon">
+          <div class="proj-ring"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
           </svg>
         </div>
-        <div class="link-card-body">
-          <div class="link-card-label">Blog</div>
-          <div class="link-card-url">blog.yuer6327.top</div>
+        <div class="proj-text">
+          <div class="proj-label">Blog</div>
+          <div class="proj-url">blog.yuer6327.top</div>
         </div>
-        <span class="link-card-arrow">↗</span>
+        <span class="proj-arrow">&#8599;</span>
       </a>
 
-      <a href="https://ries.yuer6327.top/" class="link-card" target="_blank" rel="noopener">
-        <div class="link-card-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+      <!-- RIES -->
+      <a href="https://ries.yuer6327.top/" class="project-card" target="_blank" rel="noopener">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+        <div class="proj-icon">
+          <div class="proj-ring"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 12h14"/>
             <path d="M12 5v14"/>
             <path d="M7 8c1.5-1 3-1.5 5-1.5s3.5.5 5 1.5"/>
             <path d="M7 16c1.5 1 3 1.5 5 1.5s3.5-.5 5-1.5"/>
           </svg>
         </div>
-        <div class="link-card-body">
-          <div class="link-card-label">RIES</div>
-          <div class="link-card-url">ries.yuer6327.top</div>
+        <div class="proj-text">
+          <div class="proj-label">RIES</div>
+          <div class="proj-url">ries.yuer6327.top</div>
         </div>
-        <span class="link-card-arrow">↗</span>
+        <span class="proj-arrow">&#8599;</span>
       </a>
 
-      <a href="https://opan.yuer6327.top/" class="link-card" target="_blank" rel="noopener">
-        <div class="link-card-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+      <!-- oPan -->
+      <a href="https://opan.yuer6327.top/" class="project-card" target="_blank" rel="noopener">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+        <div class="proj-icon">
+          <div class="proj-ring"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
           </svg>
         </div>
-        <div class="link-card-body">
-          <div class="link-card-label">oPan</div>
-          <div class="link-card-url">opan.yuer6327.top</div>
+        <div class="proj-text">
+          <div class="proj-label">oPan</div>
+          <div class="proj-url">opan.yuer6327.top</div>
         </div>
-        <span class="link-card-arrow">↗</span>
+        <span class="proj-arrow">&#8599;</span>
       </a>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- Latest Posts -->
-  <section class="section">
+  <!-- ==================== LINKS ==================== -->
+  <section class="section reveal">
     <div class="section-header">
-      <span class="section-icon">📃</span>
-      <span class="section-title">Latest Posts</span>
+      <span class="section-title">Links</span>
       <div class="section-line"></div>
     </div>
-    <div class="posts-list" id="posts-list">
-      <div class="posts-loading">
-        <span>正在加载文章</span><span class="loading-dots"></span>
+    <div class="links-grid">
+      <!-- X -->
+      <a href="https://x.com/yuer6327" class="link-card" target="_blank" rel="noopener">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+        <div class="link-icon">
+          <div class="link-icon-ring"></div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#c8c8c8" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25Zm-1.16 17.52h1.833L7.084 4.126H5.117L17.084 19.77Z"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <div class="link-label">X (Twitter)</div>
+          <div class="link-url">x.com/yuer6327</div>
+        </div>
+        <span class="link-arrow">&#8599;</span>
+      </a>
+
+      <!-- GitHub -->
+      <a href="https://github.com/Yuer6327" class="link-card" target="_blank" rel="noopener">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+        <div class="link-icon">
+          <div class="link-icon-ring"></div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#c8c8c8" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <div class="link-label">GitHub</div>
+          <div class="link-url">github.com/Yuer6327</div>
+        </div>
+        <span class="link-arrow">&#8599;</span>
+      </a>
+
+      <!-- Email -->
+      <div class="link-card email-card" id="emailCard" onclick="copyEmail()">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+        <div class="link-icon">
+          <div class="link-icon-ring"></div>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </div>
+        <div class="link-text">
+          <div class="link-label">Outlook</div>
+          <div class="link-url">Tom_2782587337@outlook.com</div>
+        </div>
+        <span class="copy-badge" id="copyBadge">Copied</span>
+        <span class="link-arrow" id="emailArrow">Copy</span>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- ==================== POSTS ==================== -->
+  <section class="section reveal">
+    <div class="section-header">
+      <span class="section-title">Latest Posts</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline" id="posts-list">
+      <div class="posts-loading">
+        <span>&#x25B6; Loading</span><span class="loading-dots"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
   <footer class="footer">
+    <div class="footer-line" id="footerLine"></div>
     <div class="footer-inner">
       <div class="footer-left">
-        Copyright © 2026 By <a href="mailto:Tom_2782587337@outlook.com">Yuer6327</a>
+        &copy; 2026 <a href="mailto:Tom_2782587337@outlook.com">Yuer6327</a>
       </div>
       <div class="footer-right" id="footer-time"></div>
     </div>
@@ -738,53 +1140,74 @@ a:hover {
 
 <script>
 (function() {
-  // Time display
+  // ---- Time display ----
   function updateTime() {
     var now = new Date();
-    var options = { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false };
-    var timeStr = now.toLocaleTimeString('zh-CN', options);
+    var opts = { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit', hour12: false };
     var el = document.getElementById('current-time');
-    if (el) el.textContent = timeStr;
+    if (el) el.textContent = now.toLocaleTimeString('zh-CN', opts);
   }
   updateTime();
   setInterval(updateTime, 30000);
 
-  // Footer time
+  // ---- Footer time ----
   function updateFooterTime() {
     var now = new Date();
-    var options = { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+    var opts = { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
     var ftEl = document.getElementById('footer-time');
-    if (ftEl) ftEl.textContent = 'UTC+8 ' + now.toLocaleString('zh-CN', options);
+    if (ftEl) ftEl.textContent = 'UTC+8 ' + now.toLocaleString('zh-CN', opts);
   }
   updateFooterTime();
   setInterval(updateFooterTime, 30000);
 
-  // Escape HTML
-  function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+  // ---- Scroll-reveal via IntersectionObserver ----
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var idx = 0;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.transitionDelay = (idx++ * 0.15) + 's';
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(function(el) { observer.observe(el); });
+  } else {
+    reveals.forEach(function(el) { el.classList.add('visible'); });
   }
 
-  // Copy email
+  // ---- Footer line self-drawing ----
+  var footerLine = document.getElementById('footerLine');
+  if (footerLine && 'IntersectionObserver' in window) {
+    var footerObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          footerObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    footerObserver.observe(footerLine);
+  }
+
+  // ---- Copy email ----
   window.copyEmail = function() {
     var email = 'Tom_2782587337@outlook.com';
     var badge = document.getElementById('copyBadge');
     var arrow = document.getElementById('emailArrow');
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(email).then(function() {
-        showCopied(badge, arrow);
-      });
+      navigator.clipboard.writeText(email).then(function() { showCopied(badge, arrow); });
     } else {
-      var textarea = document.createElement('textarea');
-      textarea.value = email;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
+      var ta = document.createElement('textarea');
+      ta.value = email;
+      ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
       try { document.execCommand('copy'); } catch(e) {}
-      document.body.removeChild(textarea);
+      document.body.removeChild(ta);
       showCopied(badge, arrow);
     }
   };
@@ -795,26 +1218,32 @@ a:hover {
       setTimeout(function() { badge.classList.remove('show'); }, 2000);
     }
     if (arrow) {
-      var original = arrow.textContent;
+      var orig = arrow.textContent;
       arrow.textContent = '✓';
       arrow.style.color = '#018574';
       setTimeout(function() {
-        arrow.textContent = original;
+        arrow.textContent = orig;
         arrow.style.color = '';
       }, 2000);
     }
   }
 
-  // Fetch RSS
+  // ---- Escape HTML ----
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ---- Fetch RSS ----
   async function fetchPosts() {
     var container = document.getElementById('posts-list');
     try {
-      var response = await fetch('https://blog.yuer6327.top/rss.xml');
-      if (!response.ok) throw new Error('Network error');
-      var xmlText = await response.text();
-      var parser = new DOMParser();
-      var xmlDoc = parser.parseFromString(xmlText, 'application/xml');
-      var items = xmlDoc.querySelectorAll('item');
+      var res = await fetch('https://blog.yuer6327.top/rss.xml');
+      if (!res.ok) throw new Error('Network error');
+      var xml = await res.text();
+      var doc = new DOMParser().parseFromString(xml, 'application/xml');
+      var items = doc.querySelectorAll('item');
       var posts = [];
 
       items.forEach(function(item) {
@@ -825,7 +1254,7 @@ a:hover {
         var contentEl = item.getElementsByTagNameNS('http://purl.org/rss/1.0/modules/content/', 'encoded')[0];
         var content = contentEl ? (contentEl.textContent || '') : '';
 
-        // Skip encrypted/password-protected posts: they have empty content:encoded
+        // Skip encrypted/password-protected posts
         if (!content || content.trim().length === 0) return;
 
         var dateStr = '';
@@ -836,49 +1265,53 @@ a:hover {
             String(d.getDate()).padStart(2, '0');
         }
 
-        // Extract category
-        var categories = item.querySelectorAll('category');
-        var tag = '';
-        if (categories.length > 0) {
-          tag = categories[0].textContent;
-        }
+        var cats = item.querySelectorAll('category');
+        var tag = cats.length > 0 ? cats[0].textContent : '';
 
         posts.push({ title: title, link: link, dateStr: dateStr, description: description, tag: tag });
       });
 
-      // Render posts (max 8)
-      var displayPosts = posts.slice(0, 8);
+      var display = posts.slice(0, 8);
       container.innerHTML = '';
 
-      if (displayPosts.length === 0) {
+      if (display.length === 0) {
         container.innerHTML = '<div class="posts-loading">暂无文章</div>';
         return;
       }
 
-      displayPosts.forEach(function(post, idx) {
-        var postEl = document.createElement('a');
-        postEl.href = post.link;
-        postEl.target = '_blank';
-        postEl.rel = 'noopener';
-        postEl.className = 'post-item';
-        postEl.style.opacity = '0';
-        postEl.style.animation = 'fadeUp 0.4s ease forwards';
-        postEl.style.animationDelay = (idx * 0.06) + 's';
+      display.forEach(function(post, i) {
+        var el = document.createElement('a');
+        el.href = post.link;
+        el.target = '_blank';
+        el.rel = 'noopener';
+        el.className = 'timeline-item';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-10px)';
+        el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        el.style.transitionDelay = (i * 0.08) + 's';
 
-        var tagHtml = '';
-        if (post.tag) {
-          tagHtml = '<span class="post-tag">' + escapeHtml(post.tag) + '</span>';
-        }
+        var tagHtml = post.tag
+          ? '<span class="timeline-tag">' + esc(post.tag) + '</span>'
+          : '';
 
-        postEl.innerHTML =
-          '<span class="post-date">' + escapeHtml(post.dateStr) + '</span>' +
-          '<div class="post-content">' +
-            '<div class="post-title">' + escapeHtml(post.title) + '</div>' +
-            '<div class="post-excerpt">' + escapeHtml(post.description) + '</div>' +
+        el.innerHTML =
+          '<div class="timeline-dot"></div>' +
+          '<div class="timeline-head">' +
+            '<span class="timeline-date">' + esc(post.dateStr) + '</span>' +
+            tagHtml +
           '</div>' +
-          tagHtml;
+          '<div class="timeline-title">' + esc(post.title) + '</div>' +
+          '<div class="timeline-excerpt">' + esc(post.description) + '</div>';
 
-        container.appendChild(postEl);
+        container.appendChild(el);
+
+        // Trigger animation after append
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            el.style.opacity = '1';
+            el.style.transform = 'translateX(0)';
+          });
+        });
       });
 
     } catch (err) {
