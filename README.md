@@ -5,34 +5,13 @@
   </picture>
 </p>
 
-<!-- Typing SVG: tagline -->
-<p align="center">
-  <a href="https://yuer6327.top">
-    <img src="https://readme-typing-svg.demolab.com?font=IBM+Plex+Mono&weight=500&size=15&duration=3000&pause=1500&color=018574&center=true&vCenter=true&multiline=true&repeat=true&width=500&height=50&lines=%E7%B2%BE%E5%BD%A9%E7%9A%84%E4%BA%BA%E7%94%9F%E5%B0%B1%E6%98%AF%E6%97%A0%E4%BC%91%E6%AD%A2%E5%9C%B0%E6%8A%98%E8%85%BE" alt="tagline" />
-  </a>
-</p>
-
 <!-- Terminal-style intro -->
 <p align="center">
   <img src="https://custom-icon-badges.demolab.com/badge/%3E_%E4%B8%8A%E6%B5%B7-018574?style=flat&logo=location&logoColor=white" alt="location" />
   <img src="https://custom-icon-badges.demolab.com/badge/%E5%AD%A6%E7%94%9F_%7C_%E5%BC%80%E5%8F%91%E8%80%85-018574?style=flat&logo=terminal&logoColor=white" alt="role" />
-  <img src="https://custom-icon-badges.demolab.com/badge/astro_%7C_php_%7C_js-018574?style=flat&logo=code&logoColor=white" alt="stack" />
+  <img src="https://custom-icon-badges.demolab.com/badge/HTML_%7C_php_%7C_js-018574?style=flat&logo=code&logoColor=white" alt="stack" />
 </p>
 
-```
-┌─────────────────────────────────────────────────────┐
-│                                                     │
-│   ┌─ GITHUB.COM/YUER6327 ──────────────────────┐   │
-│   │                                             │   │
-│   │   做让自己学到东西的事。                      │   │
-│   │   大部分是 Web，偶尔是数学，总是很有趣。      │   │
-│   │                                             │   │
-│   └─────────────────────────────────────────────┘   │
-│                                                     │
-└─────────────────────────────────────────────────────┘
-```
-
----
 
 <!-- ════════════════════════ 项目 ════════════════════════ -->
 
@@ -108,10 +87,10 @@
 <table>
   <tr>
     <td width="50%" valign="top">
-      <img src="https://github-readme-stats.vercel.app/api?username=Yuer6327&show_icons=true&theme=tokyonight&bg_color=08090a&border_color=1a1e21&title_color=018574&icon_color=018574&text_color=e8eaec&hide_border=true&locale=zh-CN" width="100%" alt="GitHub 统计" />
+      <img src="https://github-readme-stats.vercel.app/api?username=Yuer6327&show_icons=true&theme=tokyonight&bg_color=08090a&border_color=1a1e21&title_color=018574&icon_color=018574&text_color=e8eaec&hide_border=true" width="100%" alt="GitHub 统计" />
     </td>
     <td width="50%" valign="top">
-      <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Yuer6327&layout=compact&theme=tokyonight&bg_color=08090a&border_color=1a1e21&title_color=018574&text_color=e8eaec&hide_border=true&locale=zh-CN" width="100%" alt="常用语言" />
+      <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Yuer6327&layout=compact&theme=tokyonight&bg_color=08090a&border_color=1a1e21&title_color=018574&text_color=e8eaec" width="100%" alt="常用语言" />
     </td>
   </tr>
 </table>
