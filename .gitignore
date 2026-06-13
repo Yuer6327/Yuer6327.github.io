@@ -1,0 +1,10 @@
+# Claude Code
+.claude/
+
+# Obsidian
+.obsidian/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

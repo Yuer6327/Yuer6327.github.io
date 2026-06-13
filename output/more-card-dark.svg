@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="140" viewBox="0 0 460 140">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#018574" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#018574" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="460" height="140" rx="4" fill="#0e1012"/>
+  <rect x="0.5" y="0.5" width="459" height="139" rx="4" fill="none" stroke="#1a1e21"/>
+  <rect width="460" height="140" fill="url(#glow)"/>
+  <!-- Corner marks -->
+  <line x1="10" y1="8" x2="18" y2="8" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="10" y1="8" x2="10" y2="16" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="450" y1="8" x2="442" y2="8" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="450" y1="8" x2="450" y2="16" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="10" y1="132" x2="18" y2="132" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="10" y1="132" x2="10" y2="124" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="450" y1="132" x2="442" y2="132" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="450" y1="132" x2="450" y2="124" stroke="#018574" stroke-opacity="0.3" stroke-width="1"/>
+  <!-- Dashed circle -->
+  <circle cx="230" cy="52" r="20" fill="none" stroke="#252b2f" stroke-width="1" stroke-dasharray="3 3"/>
+  <!-- Arrow icon -->
+  <path d="M224 52 L236 52 M231 47 L236 52 L231 57" fill="none" stroke="#4a5058" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Text -->
+  <text x="230" y="88" font-family="'IBM Plex Mono', monospace" font-size="13" font-weight="500" fill="#7a8088" text-anchor="middle">查看全部仓库</text>
+  <text x="230" y="106" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#4a5058" text-anchor="middle">github.com/Yuer6327?tab=repositories</text>
+  <!-- Decorative dots -->
+  <circle cx="170" cy="52" r="1.5" fill="#1a1e21"/>
+  <circle cx="290" cy="52" r="1.5" fill="#1a1e21"/>
+</svg>

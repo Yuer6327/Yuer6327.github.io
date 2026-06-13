@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="140" viewBox="0 0 460 140">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#018574" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#018574" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="460" height="140" rx="4" fill="#0e1012"/>
+  <rect x="0.5" y="0.5" width="459" height="139" rx="4" fill="none" stroke="#1a1e21"/>
+  <rect width="460" height="140" fill="url(#glow)"/>
+  <!-- Corner marks -->
+  <line x1="10" y1="8" x2="18" y2="8" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="10" y1="8" x2="10" y2="16" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="8" x2="442" y2="8" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="8" x2="450" y2="16" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="10" y1="132" x2="18" y2="132" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="10" y1="132" x2="10" y2="124" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="132" x2="442" y2="132" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="132" x2="450" y2="124" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <!-- Icon: Book -->
+  <rect x="24" y="36" width="32" height="32" rx="16" fill="none" stroke="#1a1e21"/>
+  <path d="M34 46 L34 62 M34 46 L44 46 C45 46 46 47 46 48 L46 62 M34 46 L36 44 C37 43 38 44 38 45 L38 62" fill="none" stroke="#7a8088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Text -->
+  <text x="72" y="48" font-family="'IBM Plex Mono', monospace" font-size="15" font-weight="600" fill="#e8eaec">Blog</text>
+  <text x="72" y="64" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#4a5058">blog.yuer6327.top</text>
+  <!-- Description -->
+  <text x="24" y="100" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#7a8088">项目开发与设计笔记</text>
+  <text x="24" y="116" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#4a5058">Astro · Fuwari · 写作</text>
+  <!-- Arrow -->
+  <path d="M430 16 L440 16 L440 26" fill="none" stroke="#4a5058" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M430 26 L440 16" fill="none" stroke="#4a5058" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

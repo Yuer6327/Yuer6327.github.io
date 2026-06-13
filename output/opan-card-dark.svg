@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="140" viewBox="0 0 460 140">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#018574" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#018574" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="460" height="140" rx="4" fill="#0e1012"/>
+  <rect x="0.5" y="0.5" width="459" height="139" rx="4" fill="none" stroke="#1a1e21"/>
+  <rect width="460" height="140" fill="url(#glow)"/>
+  <!-- Corner marks -->
+  <line x1="10" y1="8" x2="18" y2="8" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="10" y1="8" x2="10" y2="16" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="8" x2="442" y2="8" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="8" x2="450" y2="16" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="10" y1="132" x2="18" y2="132" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="10" y1="132" x2="10" y2="124" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="132" x2="442" y2="132" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <line x1="450" y1="132" x2="450" y2="124" stroke="#018574" stroke-opacity="0.4" stroke-width="1"/>
+  <!-- Icon: Cloud -->
+  <rect x="24" y="36" width="32" height="32" rx="16" fill="none" stroke="#1a1e21"/>
+  <path d="M31 58 C28 58 26 56 26 53.5 C26 51.2 27.8 49.4 30 49.2 C30 45.8 33 43 36.5 43 C39.8 43 42.5 45.4 42.9 48.5 C44.5 48.8 46 50.2 46 52 C46 54 44.5 55.5 42.5 55.5" fill="none" stroke="#7a8088" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Text -->
+  <text x="72" y="48" font-family="'IBM Plex Mono', monospace" font-size="15" font-weight="600" fill="#e8eaec">oPan</text>
+  <text x="72" y="64" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#4a5058">opan.yuer6327.top</text>
+  <!-- Description -->
+  <text x="24" y="100" font-family="'IBM Plex Mono', monospace" font-size="11" fill="#7a8088">开放网盘 · 病毒扫描 · 云存储</text>
+  <text x="24" y="116" font-family="'IBM Plex Mono', monospace" font-size="10" fill="#4a5058">PHP · Vercel · Supabase</text>
+  <!-- Arrow -->
+  <path d="M430 16 L440 16 L440 26" fill="none" stroke="#4a5058" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M430 26 L440 16" fill="none" stroke="#4a5058" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
