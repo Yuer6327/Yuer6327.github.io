@@ -409,7 +409,7 @@ body[data-align="center"] .block-line {
   display: grid;
   place-items: center;
   font-size: 1.05rem;
-  transition: background .15s, border-color .15s, box-shadow .15s;
+  transition: background .15s, border-color .15s, box-shadow .15s, transform .15s var(--ease);
   flex-shrink: 0;
 }
 .seedbar-btn .die {
@@ -422,6 +422,7 @@ body[data-align="center"] .block-line {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
+.seedbar-btn:active { transform: scale(0.9); }
 .seedbar-btn.is-rolling {
   pointer-events: none;
   background: var(--accent);
@@ -430,18 +431,66 @@ body[data-align="center"] .block-line {
 }
 .seedbar-copy {
   padding: 0.35rem 0.7rem;
+  min-width: 5.4em; /* keep width stable when the label swaps to 已复制 ✓ */
+  text-align: center;
   border-radius: 999px;
   border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent);
   color: var(--fg);
   font-size: 10.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: background .15s, color .15s;
+  transition: background .15s, color .15s, transform .15s var(--ease), opacity .12s ease;
   flex-shrink: 0;
 }
 .seedbar-copy:hover {
   background: var(--accent);
   color: var(--surface);
+}
+.seedbar-copy:active { transform: scale(0.94); }
+.seedbar-copy.copy-pop { animation: seed-copy-pop .16s ease-out; }
+@keyframes seed-copy-pop {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+
+/* one-time affordance for the reroll dice */
+.seedbar-hint {
+  position: absolute;
+  right: 0.05rem;
+  bottom: calc(100% + 0.55rem);
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow: 0 10px 26px hsl(0 0% 0% / 0.3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  transform-origin: 90% 100%;
+  transition: opacity .25s ease, transform .32s cubic-bezier(0.22, 1.1, 0.32, 1.15);
+}
+.seedbar-hint::after {
+  content: "";
+  position: absolute;
+  right: 0.9rem;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  border-right: 1.5px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--accent) 50%, transparent);
+}
+.seedbar-hint.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 /* easter egg — greeting bubble anchored above the seedbar */
@@ -548,6 +597,7 @@ body[data-align="center"] .block-line {
   .seedbar-btn .die { transform: none !important; }
   .egg-dialog { transition: opacity .18s ease; }
   .egg-dialog-card { transform: none !important; transition: opacity .18s ease; }
+  .seedbar-hint { transform: none !important; transition: opacity .18s ease; }
 }
 
 /* ============================================================
@@ -1267,6 +1317,7 @@ body[data-mood="glass"] .seedbar {
   />
   <button type="button" class="seedbar-copy" id="seed-copy" title="复制当前 seed 文本">copy</button>
   <button type="button" class="seedbar-btn" id="reroll" title="随机换一款设计" aria-label="随机换一款设计"><span class="die" id="die-face" aria-hidden="true">🎲</span></button>
+  <div class="seedbar-hint" id="seedbar-hint" role="tooltip">🎲 随机换款设计</div>
 </div>
 
 <div class="egg-dialog" id="egg-dialog" role="dialog" aria-label="彩蛋">
@@ -2211,6 +2262,7 @@ body[data-mood="glass"] .seedbar {
   }
 
   rerollBtn.addEventListener("click", function () {
+    dismissSeedHint();
     if (rolling) return;
     var next = randomSeed();
     applySeed(next, { animate: true });
@@ -2218,6 +2270,7 @@ body[data-mood="glass"] .seedbar {
   });
 
   if (seedInput) {
+    seedInput.addEventListener("focus", dismissSeedHint);
     seedInput.addEventListener("keydown", function (e) {
       if (e.key !== "Enter") return;
       e.preventDefault();
@@ -2227,16 +2280,50 @@ body[data-mood="glass"] .seedbar {
     });
   }
 
+  function swapCopyLabel(label) {
+    if (seedCopyBtn.textContent === label) return;
+    seedCopyBtn.textContent = label;
+    /* restart the pop-in so the new label fades up instead of hard-cutting */
+    seedCopyBtn.classList.remove("copy-pop");
+    void seedCopyBtn.offsetWidth;
+    seedCopyBtn.classList.add("copy-pop");
+  }
+
   function flashCopyBtn(ok) {
     if (!seedCopyBtn) return;
     if (copyResetTimer) clearTimeout(copyResetTimer);
-    var prev = seedCopyBtn.textContent;
-    seedCopyBtn.textContent = ok ? "已复制 ✓" : "失败";
+    swapCopyLabel(ok ? "已复制 ✓" : "失败");
     copyResetTimer = setTimeout(function () {
-      seedCopyBtn.textContent = "copy";
+      swapCopyLabel("copy");
       copyResetTimer = null;
     }, 1200);
-    void prev;
+  }
+
+  /* ========== one-time reroll affordance ========== */
+  var seedbarHintEl = document.getElementById("seedbar-hint");
+  var seedHintTimer = null;
+  var SEED_HINT_KEY = "seedHintSeen";
+
+  function markSeedHintSeen() {
+    try { localStorage.setItem(SEED_HINT_KEY, "1"); } catch (e) { /* private mode */ }
+  }
+  function seedHintAlreadySeen() {
+    try { return !!localStorage.getItem(SEED_HINT_KEY); } catch (e) { return true; }
+  }
+  function hideSeedHint() {
+    if (seedbarHintEl) seedbarHintEl.classList.remove("show");
+  }
+  function dismissSeedHint() {
+    clearTimeout(seedHintTimer);
+    markSeedHintSeen();
+    hideSeedHint();
+  }
+  function showSeedHint() {
+    if (!seedbarHintEl || seedHintAlreadySeen()) return;
+    markSeedHintSeen();
+    seedbarHintEl.classList.add("show");
+    clearTimeout(seedHintTimer);
+    seedHintTimer = setTimeout(hideSeedHint, 4200);
   }
 
   async function copySeed() {
@@ -2262,7 +2349,10 @@ body[data-mood="glass"] .seedbar {
       }
     }
   }
-  if (seedCopyBtn) seedCopyBtn.addEventListener("click", copySeed);
+  if (seedCopyBtn) seedCopyBtn.addEventListener("click", function () {
+    dismissSeedHint();
+    copySeed();
+  });
 
   /* ========== 5) Clock + RSS (content fixed) ========== */
   function padTime() {
@@ -2748,6 +2838,9 @@ body[data-mood="glass"] .seedbar {
       clearDecoIdle();
     };
   });
+
+  /* show the dice affordance once the seedbar is on screen, first visit only */
+  setTimeout(showSeedHint, 1600);
 
 })();
 </script>
