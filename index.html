@@ -444,6 +444,99 @@ body[data-align="center"] .block-line {
   color: var(--surface);
 }
 
+/* easter egg — greeting bubble anchored above the seedbar */
+.egg-dialog {
+  position: fixed;
+  left: 50%;
+  bottom: 4.55rem;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: max-content;
+  max-width: calc(100vw - 1.5rem);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s ease, visibility .2s ease;
+}
+.egg-dialog.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.egg-dialog-card {
+  position: relative;
+  padding: 0.8rem 1.25rem 0.7rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
+  border: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 16px 40px hsl(0 0% 0% / 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  transform: translateY(10px) scale(0.86);
+  transform-origin: 50% 100%; /* grow up from the seedbar it's anchored to */
+  transition: transform .32s cubic-bezier(0.22, 1.1, 0.32, 1.15); /* springy pop */
+}
+.egg-dialog.show .egg-dialog-card {
+  transform: translateY(0) scale(1);
+}
+/* little tail pointing down at the seedbar */
+.egg-dialog-card::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%) rotate(45deg);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border-right: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.egg-dialog-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.1rem, 4.2vw, 1.6rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  min-height: 1.2em; /* reserve one line so the stream doesn't nudge the bubble */
+  white-space: nowrap;
+}
+
+.egg-dialog-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.42rem 1.25rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  box-shadow: 0 4px 14px hsl(0 0% 0% / 0.28);
+  transition: transform .1s ease, filter .15s ease;
+}
+.egg-dialog-btn::after {
+  content: "→";
+  opacity: 0.85;
+  transition: transform .15s ease;
+}
+.egg-dialog-btn:hover {
+  filter: brightness(1.08);
+}
+.egg-dialog-btn:hover::after {
+  transform: translateX(2px);
+}
+.egg-dialog-btn:active { transform: scale(0.97); }
+
 /* boot veil */
 .is-boot .boot-hide {
   opacity: 0;
@@ -453,6 +546,8 @@ body[data-align="center"] .block-line {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .seedbar-btn .die { transform: none !important; }
+  .egg-dialog { transition: opacity .18s ease; }
+  .egg-dialog-card { transform: none !important; transition: opacity .18s ease; }
 }
 
 /* ============================================================
@@ -988,6 +1083,7 @@ body[data-mood="glass"] .seedbar {
     gap: 0.35rem;
     padding: 0.35rem 0.4rem 0.35rem 0.6rem;
   }
+  .egg-dialog { bottom: 4.0rem; }
   .seedbar-input {
     width: min(34vw, 8.5rem);
     min-width: 4.5rem;
@@ -1173,6 +1269,13 @@ body[data-mood="glass"] .seedbar {
   <button type="button" class="seedbar-btn" id="reroll" title="随机换一款设计" aria-label="随机换一款设计"><span class="die" id="die-face" aria-hidden="true">🎲</span></button>
 </div>
 
+<div class="egg-dialog" id="egg-dialog" role="dialog" aria-label="彩蛋">
+  <div class="egg-dialog-card">
+    <p class="egg-dialog-text" id="egg-dialog-text" aria-label="Hey! That's me! 🙃"></p>
+    <a class="egg-dialog-btn" id="egg-dialog-close" href="https://blog.yuer6327.top" target="_blank" rel="noopener">View My Blog!</a>
+  </div>
+</div>
+
 <script>
 (function () {
   "use strict";
@@ -1208,16 +1311,94 @@ body[data-mood="glass"] .seedbar {
   }
 
   /* easter-egg triggers stored as hash digests only */
+  /* trigger seeds play a greeting bubble above the seedbar — no theme change, no navigation */
   var EGG_HASHES = {
     3829411217: 1,
     3431067559: 1,
     2941177969: 1
   };
-  var EGG_URL = "https://github.com/yuer6327";
+  var eggDialogEl = document.getElementById("egg-dialog");
+  var eggDialogText = document.getElementById("egg-dialog-text");
+  var eggDialogBtn = document.getElementById("egg-dialog-close");
+  var eggStreamTimer = null;
+  var eggHideTimer = null;
+  var eggHideAt = null;    /* absolute target time for auto-hide (null = not scheduled) */
+  var eggHovering = false; /* pause the countdown while the cursor is over the bubble */
+  var EGG_GREETING = "Hey! That's me! 🙃";
 
   function isEasterEgg(seed) {
     return Object.prototype.hasOwnProperty.call(EGG_HASHES, String(hashStr(String(seed == null ? "" : seed))));
   }
+
+  function scheduleEggHide(delay) {
+    clearTimeout(eggHideTimer);
+    eggHideAt = Date.now() + delay;
+    if (eggHovering) return; /* held open while hovered — mouseleave resumes the countdown */
+    eggHideTimer = setTimeout(function () { closeEggDialog(true); }, delay);
+  }
+
+  function openEggDialog() {
+    if (!eggDialogEl) return;
+    clearTimeout(eggStreamTimer);
+    eggHideAt = null;
+    eggHovering = false;
+    eggDialogEl.classList.add("show");
+    if (eggDialogBtn) eggDialogBtn.focus();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (eggDialogText) eggDialogText.textContent = EGG_GREETING;
+      scheduleEggHide(2600);
+      return;
+    }
+    if (!eggDialogText) return;
+    eggDialogText.textContent = "";
+    var i = 0;
+    function tick() {
+      if (i < EGG_GREETING.length) {
+        eggDialogText.textContent = EGG_GREETING.slice(0, ++i);
+        eggStreamTimer = setTimeout(tick, 34 + Math.random() * 4);
+      } else {
+        /* stream finished (~0.6s) — give it a beat to read/click, then auto-hide */
+        scheduleEggHide(2800);
+      }
+    }
+    tick();
+  }
+
+  function closeEggDialog(refocus) {
+    if (!eggDialogEl) return;
+    clearTimeout(eggStreamTimer);
+    clearTimeout(eggHideTimer);
+    eggHideAt = null;
+    eggDialogEl.classList.remove("show");
+    if (refocus) {
+      var input = document.getElementById("seed-input");
+      if (input) input.focus();
+    }
+  }
+
+  if (eggDialogEl) {
+    eggDialogEl.addEventListener("mouseenter", function () {
+      eggHovering = true;
+      clearTimeout(eggHideTimer); /* pause — remaining time stays implied by eggHideAt */
+    });
+    eggDialogEl.addEventListener("mouseleave", function () {
+      eggHovering = false;
+      if (eggHideAt == null) return;
+      var remaining = eggHideAt - Date.now();
+      if (remaining > 0) scheduleEggHide(remaining);
+      else closeEggDialog(true);
+    });
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeEggDialog(true);
+  });
+  /* click outside the bubble dismisses it (input keeps its own focus) */
+  document.addEventListener("click", function (e) {
+    if (!eggDialogEl || !eggDialogEl.classList.contains("show")) return;
+    if (eggDialogEl.contains(e.target)) return;
+    closeEggDialog(false);
+  });
 
   var rand, currentSeed, motionCfg, designState;
   var pick = function (arr) { return arr[Math.floor(rand() * arr.length)]; };
@@ -1874,11 +2055,11 @@ body[data-mood="glass"] .seedbar {
     seed = seed == null ? "" : String(seed);
 
     if (isEasterEgg(seed)) {
-      /* don't persist egg — otherwise refresh keeps bouncing to GitHub */
-      syncSeedInput(seed);
-      location.assign(EGG_URL);
+      /* egg trigger: keep the current theme untouched — just play the greeting bubble */
+      openEggDialog();
       return;
     }
+    closeEggDialog(true);
 
     currentSeed = seed;
     rand = mulberry32(seedToU32(seed));
