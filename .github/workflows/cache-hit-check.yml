@@ -1,0 +1,90 @@
+---
+# 缓存预热 + 命中检查
+# 参考：https://upxuu.com/posts/vercel-youxuan-cache（四、缓存预热）
+# 与 vercel.json 配套：HTML 在 Vercel 边缘缓存 10 年（s-maxage），部署后缓存清空，
+# 此工作流在 push 后自动把所有页面预热回 HIT，让“第一个访客”也不回源。
+name: Vercel 缓存预热与命中检查
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  cache-hit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Vercel 构建静态站约 10~60s，再缓冲确保新部署已上线
+      - name: 等待 Vercel 部署完成
+        run: sleep 120
+
+      # 本站是单页静态站（无 sitemap.xml），直接硬编码要预热的 URL。
+      # 只预热 www 主域：apex 域是 Vercel 边缘直接生成的 307 跳转，不带 X-Vercel-Cache，
+      # 预热它只会给命中报告引入 N/A 噪音。
+      - name: 生成预热 URL 列表
+        run: |
+          cat > urls.txt <<'EOF'
+          https://www.yuer6327.top/
+          https://www.yuer6327.top/index.html
+          EOF
+          echo "共 $(wc -l < urls.txt) 个页面"
+
+      # 第一遍：预热边缘缓存（curl 无客户端缓存，天然忽略客户端缓存，
+      # 不需要加 Cache-Control: no-cache，加了反而强制 CDN 重新验证，全测成 MISS）
+      - name: 第一遍 curl（预热边缘缓存）
+        run: |
+          cat urls.txt | xargs -P 8 -I {} curl -s -o /dev/null -m 20 "{}" || true
+
+      # 第二遍：检查 X-Vercel-Cache 是否 HIT
+      - name: 第二遍 curl（检查命中）
+        run: |
+          total=0; hit=0; miss=0
+          : > detail.txt
+          while IFS= read -r url; do
+            [ -z "$url" ] && continue
+            total=$((total+1))
+            cache=$(curl -s -o /dev/null -m 20 -D - "$url" \
+              | grep -i '^x-vercel-cache:' | tr -d '\r' | awk '{print $2}')
+            [ -z "$cache" ] && cache="N/A"
+            if [ "$cache" = "HIT" ]; then hit=$((hit+1)); else miss=$((miss+1)); fi
+            echo "$cache|$url" >> detail.txt
+          done < urls.txt
+
+          if [ "$total" -gt 0 ]; then
+            rate=$(awk "BEGIN{printf \"%.1f\", $hit*100.0/$total}")
+          else
+            rate="0.0"
+          fi
+
+          {
+            echo "# Vercel 边缘缓存命中报告"
+            echo ""
+            echo "> 生成时间：$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            echo "| 指标 | 数值 |"
+            echo "|------|------|"
+            echo "| 总页面数 | $total |"
+            echo "| 命中 HIT | $hit |"
+            echo "| 未命中 MISS | $miss |"
+            echo "| 命中率 | $rate% |"
+            echo ""
+            echo "## 详细状态"
+            echo ""
+            echo "| 状态 | URL |"
+            echo "|------|-----|"
+            while IFS='|' read -r cache url; do
+              echo "| $cache | $url |"
+            done < detail.txt
+          } > HIT.txt
+
+          cat HIT.txt
+
+      # 命中报告存为 Actions artifact，不提交回仓库（避免污染 main / 触发死循环）
+      - name: 上传命中报告为 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hit-report
+          path: HIT.txt
+          retention-days: 14
