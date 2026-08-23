@@ -6832,8 +6832,11 @@ body[data-mood="glass"] .seedbar {
       return;
     }
 
+    /* Fail fast: a hung blog host must resolve while the entrance animation is
+       still running, so the fallback notice lands with the flow instead of as
+       an isolated late visual change (drags Speed Index). */
     var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 3500);
     try {
       var res = await fetch("https://blog.yuer6327.top/rss.xml", {
         cache: "no-store",
