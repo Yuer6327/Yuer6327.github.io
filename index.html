@@ -6804,6 +6804,24 @@ body[data-mood="glass"] .seedbar {
     return posts;
   }
 
+  /* The hardcoded fallback list matches the live RSS when nothing changed.
+     If it already equals what the feed would render, skip repainting so the
+     section doesn't re-render + replay its stagger animation (Speed Index). */
+  function postsMatchDom(posts) {
+    var box = document.getElementById("posts-list");
+    if (!box) return false;
+    var dom = box.querySelectorAll("a.item--post");
+    if (dom.length !== posts.length) return false;
+    for (var i = 0; i < posts.length; i++) {
+      if (dom[i].getAttribute("href") !== posts[i].link) return false;
+      var label = dom[i].querySelector(".item-label");
+      if (!label || label.textContent !== posts[i].title) return false;
+      var meta = dom[i].querySelector(".item-meta");
+      if (!meta || meta.textContent !== posts[i].date) return false;
+    }
+    return true;
+  }
+
   async function fetchPosts() {
     var box = document.getElementById("posts-list");
     if (!box || postsUpgraded) return;
@@ -6825,7 +6843,11 @@ body[data-mood="glass"] .seedbar {
       var xml = await res.text();
       var posts = parseRssXml(xml);
       writeRssCache(posts);
-      paintPosts(posts, false);
+      if (postsMatchDom(posts)) {
+        postsUpgraded = true; /* identical to fallback list — keep DOM as-is */
+      } else {
+        paintPosts(posts, false);
+      }
     } catch (err) {
       showRssNotice(true);
     } finally {
