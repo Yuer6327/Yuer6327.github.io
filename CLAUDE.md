@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal homepage for **Yuer6327**, deployed on **Vercel** (region `sin1`, auto-deploy from `main`), custom domain `yuer6327.top` (apex 307 → `www.yuer6327.top`). Live site: https://www.yuer6327.top.
 
-No build step, package manager, bundler, linter, or tests. The site is one self-contained HTML file (embedded CSS + inline JS, GSAP inlined as base64). The repo is named `yuer6327/yuer6327.github.io` but is served by Vercel, not GitHub Pages.
+No build step, package manager, bundler, linter, or tests. The site is one self-contained HTML file (embedded CSS + inline JS, GSAP inlined verbatim). The repo is named `yuer6327/yuer6327.github.io` but is served by Vercel, not GitHub Pages.
 
 ## Preview and deploy
 
@@ -27,7 +27,7 @@ Only `index.html` is the live entry. Design experiments live in sibling files an
 
 | File | Role |
 |------|------|
-| `index.html` | **Production** homepage. Seed-driven generative design + GSAP (3.13.0, inlined as base64). Single self-contained file. |
+| `index.html` | **Production** homepage. Seed-driven generative design + GSAP (3.13.0, inlined verbatim at end of body). Single self-contained file. |
 | `vercel.json` | Vercel cache headers. Applies `Cache-Control: public, max-age=0, s-maxage=315360000, must-revalidate` to everything. |
 | `.github/workflows/cache-hit-check.yml` | Cache preheat on push to `main`: waits for deploy, curls the pages, counts HIT/MISS, uploads report. |
 | `CNAME` | Leftover from GitHub Pages; unused by Vercel (served as a static file at `/CNAME`). Harmless. |
@@ -36,10 +36,10 @@ Only `index.html` is the live entry. Design experiments live in sibling files an
 
 One self-contained HTML file:
 
-1. **Head** — meta (zh-CN), canonical `https://yuer6327.top`, favicon from `blog.yuer6327.top`; GSAP 3.13.0 inlined as base64 in a `<script>`.
+1. **Head** — meta (zh-CN), canonical `https://yuer6327.top`, `preconnect` to `blog.yuer6327.top` (RSS), favicon inlined as data URIs. **No `<script>` in head** — zero executable code and zero render-blocking requests; analytics are lazy-loaded at end of body.
 2. **CSS in `<style>`** — design tokens on `:root` (overwritten at runtime by the seed/mood engine), section layout, GSAP-driven reveal + micro-interactions, responsive breakpoints, `prefers-reduced-motion`.
 3. **Body** — narrow shell: Hero → Projects → Links → Latest Posts → Footer.
-4. **Inline `<script>` IIFE** — seed-driven generative engine (mood → layout/palette/chrome), Shanghai clock, GSAP entrance + micro-interactions, RSS post list.
+4. **End-of-body scripts, strict order** — ① liquidGL v2.0.1 (vendored WebGL liquid-glass, defines `window.liquidGL`); ② GSAP 3.13.0 inlined verbatim (kept out of `<head>` so the boot veil paints before ~72 KB of JS is parsed); ③ app IIFE — seed-driven generative engine (mood → layout/palette/chrome), Shanghai clock, GSAP entrance + micro-interactions, RSS post list; ④ Umami loader — injects the analytics `<script async>` on `load` + `requestIdleCallback` (tracking never competes with the document download or delays the seedbar).
 
 There is no shared CSS/JS module system. Copy patterns deliberately between variants; do not assume a shared asset pipeline.
 
