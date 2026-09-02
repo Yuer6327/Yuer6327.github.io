@@ -254,7 +254,7 @@ body[data-align="center"] .block-line {
   align-items: center;
   gap: 0.75rem 1rem;
   padding: 0.85rem 1rem;
-  border-radius: calc(var(--radius) * 0.65);
+  border-radius: var(--item-radius, calc(var(--radius) * 0.65));
   border: 1.5px solid color-mix(in srgb, var(--accent) 55%, transparent);
   background: transparent;
   color: var(--fg);
@@ -635,6 +635,8 @@ body.liquid-glass .seedbar-btn {
 body[data-case="upper"] .hero-name { text-transform: uppercase; }
 body[data-head="bracket"] .block-idx::before { content: "["; opacity: 0.5; }
 body[data-head="bracket"] .block-idx::after { content: "]"; opacity: 0.5; }
+body[data-head="hash"] .block-idx::before { content: "#"; opacity: 0.5; }
+body[data-head="noline"] .block-line { display: none; }
 
 /* density */
 body[data-density="airy"] {
@@ -674,11 +676,6 @@ body[data-item="underline"] .item:hover {
 }
 body[data-item="underline"] .item:hover .tag {
   border-color: color-mix(in srgb, var(--fg) 22%, transparent);
-}
-body[data-item="pill"] .item {
-  border-radius: 999px;
-  padding-left: 1.15rem;
-  padding-right: 1.15rem;
 }
 body[data-item="ghost"] .item {
   border-color: transparent;
@@ -750,6 +747,38 @@ body[data-item="dash"] .item:hover .tag {
   border-color: color-mix(in srgb, var(--surface) 45%, transparent);
 }
 
+/* item hover variants — placed after item chrome so they win on hover */
+body[data-hover="soft"] .item:hover {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--fg);
+  border-color: var(--accent);
+}
+body[data-hover="soft"] .item:hover .tag {
+  border-color: color-mix(in srgb, var(--fg) 22%, transparent);
+}
+body[data-hover="shift"] .item:hover {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--accent);
+}
+/* shift the inner content, not .item — GSAP magnetic owns .item's transform */
+body[data-hover="shift"] .item .item-main {
+  transition: transform .2s var(--ease);
+}
+body[data-hover="shift"] .item:hover .item-main {
+  transform: translateX(4px);
+}
+body[data-hover="shift"] .item:hover .tag {
+  border-color: color-mix(in srgb, var(--fg) 22%, transparent);
+}
+
+/* arrow glyph variants — glyph is real text, swapped via ::after */
+body[data-arrow="chev"] .item-go { font-size: 0; }
+body[data-arrow="chev"] .item-go::after { content: "›"; font-size: 1.2rem; }
+body[data-arrow="ne"] .item-go { font-size: 0; }
+body[data-arrow="ne"] .item-go::after { content: "↗"; font-size: 1.05rem; }
+body[data-arrow="none"] .item-go { display: none; }
+
 /* hero signal */
 body[data-signal="bar"] .hero-signal {
   height: 4px;
@@ -779,6 +808,20 @@ body[data-signal="tick"] .hero-signal {
   background: var(--accent);
 }
 body[data-signal="none"] .hero-signal { display: none; }
+body[data-signal="dash"] .hero-signal {
+  height: 0;
+  width: min(120px, 40%);
+  background: none;
+  border-top: 2px dashed var(--accent);
+}
+body[data-signal="square"] .hero-signal {
+  height: 9px;
+  width: 9px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-inline: var(--align-margin, 0);
+}
+body[data-align="center"][data-signal="square"] .hero-signal { margin-inline: auto; }
 
 /* hero posture */
 body[data-hero="poster"] .hero-name {
@@ -805,7 +848,7 @@ body[data-hero="badge"] .hero-tag {
   align-self: flex-start;
   display: inline-block;
   padding: 0.34em 0.8em;
-  border-radius: 999px;
+  border-radius: calc(var(--radius) * 0.5 + 2px);
   border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
   background: color-mix(in srgb, var(--accent) 9%, transparent);
 }
@@ -822,6 +865,25 @@ body[data-hero="flourish"] .hero-name::after {
   margin-inline: var(--align-margin, 0);
 }
 body[data-align="center"][data-hero="flourish"] .hero-name::after { margin-inline: auto; }
+
+/* card chrome variants — placed before mood rules so moods can still override */
+body[data-card="topline"] .card,
+body[data-card="topline"] .block {
+  border-top: 2px solid var(--accent);
+}
+body[data-card="sideline"] .card,
+body[data-card="sideline"] .block {
+  border-left: 3px solid var(--accent);
+}
+body[data-card="flat"] .card,
+body[data-card="flat"] .block {
+  border-color: transparent;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+}
+
+/* hero name tone */
+body[data-name="italic"] .hero-name { font-style: italic; }
 
 /* mood accents */
 body[data-mood="terminal"] .card,
@@ -1168,9 +1230,6 @@ body[data-mood="glass"] .seedbar {
   body[data-layout="mosaic"] .shell {
     display: flex;
     flex-direction: column;
-  }
-  body[data-item="pill"] .item {
-    border-radius: calc(var(--radius) * 0.9);
   }
   body[data-hero="poster"] .hero-name {
     font-size: calc(2.05rem * var(--scale) * var(--name-factor));
@@ -5763,7 +5822,7 @@ body[data-mood="glass"] .seedbar {
       densities: [["airy", 3], ["normal", 2]],
       items: [["outline", 1], ["underline", 2], ["ghost", 2], ["fill-soft", 1], ["dot", 1]],
       heroes: [["poster", 2], ["quiet", 2], ["normal", 1], ["badge", 1], ["flourish", 1]],
-      decos: ["plain", "glow", "bigword", "noise-band", "vignette", "wave", "frame"],
+      decos: ["plain", "glow", "bigword", "noise-band", "vignette", "wave", "frame", "margin", "tophair"],
       motion: "calm", sat: [28, 58], darkBias: 0.48,
       harmony: ["analogous", "mono", "split"]
     },
@@ -5772,7 +5831,7 @@ body[data-mood="glass"] .seedbar {
       densities: [["normal", 3], ["dense", 1]],
       items: [["outline", 2], ["underline", 2], ["stripe", 2]],
       heroes: [["quiet", 2], ["normal", 2], ["flush", 1], ["badge", 1]],
-      decos: ["grid", "dots", "plain", "noise-band", "orbit"],
+      decos: ["grid", "dots", "plain", "noise-band", "orbit", "tophair", "margin"],
       motion: "calm", sat: [30, 62], darkBias: 0.45,
       harmony: ["mono", "analogous", "complementary"]
     },
@@ -5781,14 +5840,14 @@ body[data-mood="glass"] .seedbar {
       densities: [["dense", 3], ["normal", 1]],
       items: [["underline", 3], ["ghost", 1], ["outline", 1], ["dash", 1]],
       heroes: [["quiet", 2], ["flush", 2], ["normal", 1]],
-      decos: ["grid", "diagonal", "plain", "dots", "sparkle"],
+      decos: ["grid", "diagonal", "plain", "dots", "sparkle", "tophair"],
       motion: "lively", sat: [22, 48], darkBias: 0.72,
       harmony: ["mono", "analogous"]
     },
     soft: {
       layouts: [["stack", 2], ["split", 2], ["banner", 2]],
       densities: [["airy", 2], ["normal", 3]],
-      items: [["fill-soft", 2], ["pill", 2], ["solid", 1], ["outline", 1], ["dot", 1]],
+      items: [["fill-soft", 2], ["solid", 2], ["outline", 1], ["dot", 1]],
       heroes: [["normal", 2], ["poster", 1], ["quiet", 1], ["badge", 1]],
       decos: ["gradient", "glow", "shapes", "plain", "vignette", "halo"],
       motion: "calm", sat: [36, 68], darkBias: 0.42,
@@ -5797,9 +5856,9 @@ body[data-mood="glass"] .seedbar {
     bold: {
       layouts: [["split", 1], ["banner", 2], ["mosaic", 2], ["editorial", 1], ["grid", 1]],
       densities: [["normal", 2], ["airy", 2]],
-      items: [["outline", 1], ["pill", 2], ["solid", 2], ["stripe", 1], ["dash", 1]],
+      items: [["outline", 1], ["solid", 2], ["stripe", 2], ["dash", 1]],
       heroes: [["poster", 3], ["normal", 1], ["flourish", 1]],
-      decos: ["shapes", "bigword", "gradient", "glow", "noise-band", "halo", "orbit", "sparkle"],
+      decos: ["shapes", "bigword", "gradient", "glow", "noise-band", "halo", "orbit", "sparkle", "tophair"],
       motion: "lively", sat: [52, 88], darkBias: 0.55,
       harmony: ["complementary", "triad", "split"]
     },
@@ -5808,7 +5867,7 @@ body[data-mood="glass"] .seedbar {
       densities: [["airy", 3], ["normal", 2]],
       items: [["ghost", 2], ["underline", 2], ["outline", 1], ["dot", 1]],
       heroes: [["quiet", 2], ["normal", 2], ["poster", 1], ["flourish", 1]],
-      decos: ["plain", "noise-band", "vignette", "bigword", "wave", "frame"],
+      decos: ["plain", "noise-band", "vignette", "bigword", "wave", "frame", "margin", "tophair"],
       motion: "calm", sat: [18, 42], darkBias: 0.18,
       harmony: ["analogous", "mono"]
     },
@@ -5835,14 +5894,14 @@ body[data-mood="glass"] .seedbar {
       densities: [["airy", 3], ["normal", 2]],
       items: [["ghost", 2], ["underline", 2], ["dot", 1], ["outline", 1]],
       heroes: [["quiet", 3], ["normal", 2], ["flush", 1], ["flourish", 1]],
-      decos: ["plain", "bigword", "frame", "wave", "vignette"],
+      decos: ["plain", "bigword", "frame", "wave", "vignette", "margin"],
       motion: "calm", sat: [16, 40], darkBias: 0.3,
       harmony: ["analogous", "mono"]
     },
     glass: {
       layouts: [["banner", 2], ["stack", 2], ["split", 2], ["grid", 1]],
       densities: [["airy", 2], ["normal", 3]],
-      items: [["fill-soft", 2], ["pill", 2], ["outline", 1], ["dot", 1]],
+      items: [["fill-soft", 2], ["outline", 2], ["solid", 1], ["dot", 1]],
       heroes: [["normal", 2], ["poster", 2], ["badge", 1]],
       decos: ["glow", "gradient", "halo", "orbit", "plain"],
       motion: "calm", sat: [42, 80], darkBias: 0.5,
@@ -5929,14 +5988,19 @@ body[data-mood="glass"] .seedbar {
     '"Courier New", "LXGW WenKai Mono", monospace',
     'Futura, "Century Gothic", "PingFang SC", sans-serif',
     'Didot, "Bodoni MT", "Noto Serif SC", serif',
-    '"Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif'
+    '"Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif',
+    '"Times New Roman", "Noto Serif SC", "Songti SC", serif',
+    '"Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif',
+    'Optima, Candara, "Noto Sans SC", "PingFang SC", sans-serif'
   ];
   var BODY_FONTS = [
     'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif',
     'Georgia, "Noto Serif SC", "Songti SC", serif',
     '"Helvetica Neue", Arial, "PingFang SC", sans-serif',
     'Verdana, Geneva, "PingFang SC", sans-serif',
-    'ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace'
+    'ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace',
+    '"Segoe UI", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif',
+    '"Lucida Grande", "Lucida Sans Unicode", "PingFang SC", sans-serif'
   ];
 
   function clearDecoIdle() {
@@ -6134,6 +6198,22 @@ body[data-mood="glass"] .seedbar {
           "transform:rotate(" + (range(0, 360) | 0) + "deg);";
         body.appendChild(s2);
       }
+    } else if (type === "margin") {
+      body.style.background = css(p.bg);
+      var ml = document.createElement("div");
+      ml.className = "deco";
+      ml.style.cssText =
+        "left:" + (range(4, 9) | 0) + "vw;top:0;width:1px;height:100%;" +
+        "background:" + css(c1, range(0.1, 0.2)) + ";";
+      body.appendChild(ml);
+    } else if (type === "tophair") {
+      body.style.background = css(p.bg);
+      var th = document.createElement("div");
+      th.className = "deco";
+      th.style.cssText =
+        "left:0;top:0;width:100%;height:" + pick([2, 3]) + "px;" +
+        "background:" + css(c1, range(0.45, 0.8)) + ";";
+      body.appendChild(th);
     }
 
     return decoType;
@@ -6170,10 +6250,37 @@ body[data-mood="glass"] .seedbar {
       ? "upper"
       : ((moodName === "bold" || moodName === "editorial") && rand() < 0.45) ? "upper" : "none";
     var head = weightedPick(
-      moodName === "terminal" || moodName === "zen" ? [["rule", 1], ["bracket", 1]] :
-      moodName === "editorial" || moodName === "paper" ? [["rule", 2], ["bracket", 1]] :
-      [["rule", 3], ["bracket", 1]]
+      moodName === "terminal" || moodName === "zen" ? [["rule", 2], ["bracket", 1], ["hash", 1], ["noline", 1]] :
+      moodName === "editorial" || moodName === "paper" ? [["rule", 2], ["bracket", 1], ["noline", 1]] :
+      [["rule", 3], ["bracket", 1], ["hash", 1], ["noline", 1]]
     );
+
+    /* extra quiet axes — more seed variety without visual noise */
+    var cardChrome = weightedPick(
+      moodName === "zen" || moodName === "editorial" || moodName === "gallery" || moodName === "paper"
+        ? [["plain", 4], ["flat", 1]] :
+      moodName === "brutalist" || moodName === "terminal"
+        ? [["plain", 3], ["sideline", 1]] :
+      moodName === "swiss"
+        ? [["plain", 3], ["topline", 2], ["sideline", 1]] :
+      [["plain", 4], ["topline", 2], ["sideline", 1], ["flat", 1]]
+    );
+    var hoverFx = weightedPick(
+      moodName === "terminal" || moodName === "brutalist"
+        ? [["fill", 3], ["shift", 2]] :
+      moodName === "zen" || moodName === "paper"
+        ? [["soft", 2], ["fill", 2], ["shift", 1]] :
+      [["fill", 3], ["soft", 2], ["shift", 1]]
+    );
+    var arrowGlyph = weightedPick(
+      moodName === "terminal" ? [["chev", 2], ["arrow", 2], ["none", 1]] :
+      moodName === "zen" || moodName === "paper" || moodName === "editorial"
+        ? [["none", 2], ["arrow", 2], ["ne", 1]] :
+      [["arrow", 4], ["chev", 1], ["ne", 1], ["none", 1]]
+    );
+    var nameStyle =
+      (moodName === "editorial" || moodName === "paper" || moodName === "gallery") && rand() < 0.35
+        ? "italic" : "normal";
 
     var root = document.documentElement.style;
     var set = function (k, v) { root.setProperty(k, v); };
@@ -6201,7 +6308,9 @@ body[data-mood="glass"] .seedbar {
       displayPool = [
         'Georgia, "Noto Serif SC", "Songti SC", serif',
         '"Palatino Linotype", "Book Antiqua", "Noto Serif SC", serif',
-        'Didot, "Bodoni MT", "Noto Serif SC", serif'
+        'Didot, "Bodoni MT", "Noto Serif SC", serif',
+        '"Times New Roman", "Noto Serif SC", "Songti SC", serif',
+        '"Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif'
       ];
     } else if (moodName === "brutalist") {
       displayPool = [
@@ -6254,6 +6363,7 @@ body[data-mood="glass"] .seedbar {
           : pick(["left", "left", "left", "center"]);
     set("--align", align);
     set("--links-justify", align === "center" ? "center" : "flex-start");
+    set("--line-dir", pick(["90deg", "90deg", "270deg"]));
 
     var containers = {
       stack: ["min(88vw, 560px)", "min(90vw, 680px)", "min(92vw, 820px)"],
@@ -6275,12 +6385,16 @@ body[data-mood="glass"] .seedbar {
     set("--space-base", spaceBase.toFixed(2) + "rem");
     set("--space", spaceBase.toFixed(2) + "rem");
 
+    /* capsule (999px) removed — big cards stay rectangular / modestly rounded */
     var radiusPick =
       moodName === "terminal" || moodName === "brutalist" ? [0, 0, 4] :
-      moodName === "soft" || moodName === "gallery" ? [12, 16, 20, 999] :
+      moodName === "soft" || moodName === "gallery" ? [8, 12, 16, 20] :
       moodName === "swiss" || moodName === "paper" ? [0, 4, 8, 10] :
-      [0, 6, 10, 14, 20, 999];
-    set("--radius", pick(radiusPick) + "px");
+      [0, 4, 6, 10, 14, 18, 20];
+    var radiusVal = Math.min(pick(radiusPick), 20);
+    set("--radius", radiusVal + "px");
+    /* item rows get their own radius, loosely derived from the card radius */
+    set("--item-radius", (radiusVal * pick([0, 0.4, 0.65, 0.65, 1])).toFixed(1) + "px");
     set("--border-w", pick(
       moodName === "soft" || moodName === "gallery" || moodName === "paper" ? [0, 0, 1] :
       moodName === "brutalist" ? [2, 2, 3] :
@@ -6307,11 +6421,11 @@ body[data-mood="glass"] .seedbar {
     }
 
     var signal = weightedPick(
-      moodName === "terminal" ? [["none", 2], ["line", 2], ["bar", 1], ["dot", 1], ["tick", 1]] :
-      moodName === "bold" ? [["bar", 2], ["double", 2], ["line", 1], ["none", 1], ["tick", 1]] :
-      moodName === "paper" || moodName === "gallery" ? [["none", 2], ["line", 2], ["dot", 2]] :
-      moodName === "brutalist" ? [["bar", 2], ["none", 2], ["double", 1]] :
-      [["line", 3], ["bar", 1], ["double", 1], ["dot", 1], ["tick", 1], ["none", 1]]
+      moodName === "terminal" ? [["none", 2], ["line", 2], ["bar", 1], ["dot", 1], ["tick", 1], ["dash", 1]] :
+      moodName === "bold" ? [["bar", 2], ["double", 2], ["line", 1], ["none", 1], ["tick", 1], ["square", 1]] :
+      moodName === "paper" || moodName === "gallery" ? [["none", 2], ["line", 2], ["dot", 2], ["dash", 1]] :
+      moodName === "brutalist" ? [["bar", 2], ["none", 2], ["double", 1], ["square", 1]] :
+      [["line", 3], ["bar", 1], ["double", 1], ["dot", 1], ["tick", 1], ["none", 1], ["dash", 1], ["square", 1]]
     );
 
     var body = document.body;
@@ -6325,6 +6439,10 @@ body[data-mood="glass"] .seedbar {
     body.setAttribute("data-hero", hero);
     body.setAttribute("data-case", caseMode);
     body.setAttribute("data-head", head);
+    body.setAttribute("data-card", cardChrome);
+    body.setAttribute("data-hover", hoverFx);
+    body.setAttribute("data-arrow", arrowGlyph);
+    body.setAttribute("data-name", nameStyle);
 
     var decoType = genDecoration(p, moodName, layout);
     motionCfg = buildMotionCfg(motionName, layout);
@@ -6339,6 +6457,10 @@ body[data-mood="glass"] .seedbar {
       decoType: decoType,
       case: caseMode,
       head: head,
+      card: cardChrome,
+      hover: hoverFx,
+      arrow: arrowGlyph,
+      name: nameStyle,
       palette: p
     };
     return p;
