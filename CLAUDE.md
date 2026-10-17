@@ -11,7 +11,7 @@ No build step, package manager, bundler, linter, or tests. The site is one self-
 ## Preview and deploy
 
 ```bash
-# Local preview (any static server; needed for RSS fetch CORS checks in some browsers)
+# Local preview (any static server)
 npx --yes serve .
 # or: python -m http.server 8000
 
@@ -30,18 +30,18 @@ Only `index.html` is the live entry. Design experiments live in sibling files an
 | `index.html` | **Production** homepage. Seed-driven generative design + GSAP (3.13.0, inlined verbatim at end of body). Single self-contained file. |
 | `vercel.json` | Vercel cache headers. Applies `Cache-Control: public, max-age=0, s-maxage=315360000, must-revalidate` to everything. |
 | `.github/workflows/cache-hit-check.yml` | Cache preheat on push to `main`: waits for deploy, curls the pages, counts HIT/MISS, uploads report. |
-| `.github/workflows/sync-posts.yml` | Scheduled (daily 19:07 UTC = 03:07 CST) rewrite of the Latest Posts fallback snapshot in `index.html`. Commits via `GITHUB_TOKEN` on change, then dispatches `cache-hit-check.yml` (a bot push does not re-trigger `push` workflows, so the edge cache would otherwise stay cold). |
-| `scripts/sync-posts.mjs` | The sync script used by that workflow. Regenerates the 8 fallback rows from the live RSS. All validation happens before any write — on any failure (network, parse, structure) it exits non-zero and leaves `index.html` untouched. `--check` reports staleness via exit code (0 current, 1 stale). |
+| `.github/workflows/sync-posts.yml` | Scheduled (daily 19:07 UTC = 03:07 CST) rewrite of the Latest Posts list in `index.html`. Commits via `GITHUB_TOKEN` on change, then dispatches `cache-hit-check.yml` (a bot push does not re-trigger `push` workflows, so the edge cache would otherwise stay cold). |
+| `scripts/sync-posts.mjs` | The sync script used by that workflow. Regenerates the 8 post rows from the live RSS. All validation happens before any write — on any failure (network, parse, structure) it exits non-zero and leaves `index.html` untouched. `--check` reports staleness via exit code (0 current, 1 stale). |
 | `CNAME` | Leftover from GitHub Pages; unused by Vercel (served as a static file at `/CNAME`). Harmless. |
 
 ## Architecture (single-page)
 
 One self-contained HTML file:
 
-1. **Head** — meta (zh-CN), canonical `https://yuer6327.top`, `preconnect` to `blog.yuer6327.top` (RSS), favicon inlined as data URIs. **No `<script>` in head** — zero executable code and zero render-blocking requests; analytics are lazy-loaded at end of body.
+1. **Head** — meta (zh-CN), canonical `https://yuer6327.top`, favicon inlined as data URIs. **No `<script>` in head** — zero executable code and zero render-blocking requests; analytics are lazy-loaded at end of body.
 2. **CSS in `<style>`** — design tokens on `:root` (overwritten at runtime by the seed/mood engine), section layout, GSAP-driven reveal + micro-interactions, responsive breakpoints, `prefers-reduced-motion`.
 3. **Body** — narrow shell: Hero → Projects → Links → Latest Posts → Footer.
-4. **End-of-body scripts, strict order** — ① liquidGL v2.0.1 (vendored WebGL liquid-glass, defines `window.liquidGL`); ② GSAP 3.13.0 inlined verbatim (kept out of `<head>` so the boot veil paints before ~72 KB of JS is parsed); ③ app IIFE — seed-driven generative engine (mood → layout/palette/chrome), Shanghai clock, GSAP entrance + micro-interactions, RSS post list; ④ Umami loader — injects the analytics `<script async>` on `load` + `requestIdleCallback` (tracking never competes with the document download or delays the seedbar).
+4. **End-of-body scripts, strict order** — ① liquidGL v2.0.1 (vendored WebGL liquid-glass, defines `window.liquidGL`); ② GSAP 3.13.0 inlined verbatim (kept out of `<head>` so the boot veil paints before ~72 KB of JS is parsed); ③ app IIFE — seed-driven generative engine (mood → layout/palette/chrome), Shanghai clock, GSAP entrance + micro-interactions; ④ Umami loader — injects the analytics `<script async>` on `load` + `requestIdleCallback` (tracking never competes with the document download or delays the seedbar).
 
 There is no shared CSS/JS module system. Copy patterns deliberately between variants; do not assume a shared asset pipeline.
 
@@ -54,7 +54,7 @@ There is no shared CSS/JS module system. Copy patterns deliberately between vari
 ### Dynamic data
 
 - **Time**: `Asia/Shanghai` via `toLocaleTimeString` / `toLocaleString` with `zh-CN`; footer shows `UTC+8`.
-- **Posts**: `fetch('https://blog.yuer6327.top/rss.xml')`, parse with `DOMParser`, skip items without `content:encoded`, show up to 8. Titles/tags/dates/descriptions go through an HTML-escape helper before `innerHTML`. The 8 rows hard-coded in `#posts-list` are the offline fallback (and what paints first); when they match the feed exactly, `postsMatchDom()` skips the repaint so the stagger animation doesn't replay. `scripts/sync-posts.mjs` keeps them in sync — it mirrors the page's own escape/parse/date logic, so its output is byte-identical to what `renderPostItems` would produce.
+- **Posts**: **static markup**, not fetched at runtime. The 8 rows in `#posts-list` are written into `index.html` by `scripts/sync-posts.mjs`, which pulls the live RSS and mirrors the exact escape/parse/date formatting a client-side renderer would use. A scheduled workflow keeps them current (≤1 day stale), so a visitor's browser makes no cross-origin RSS request and the section paints with the first frame instead of after a fetch. Removing the runtime fetch also removed the `preconnect`, the `posts-notice` offline banner, and the localStorage cache that existed to paper over the fetch failing.
 - **Projects / social links**: hard-coded in markup (Blog, Mathle, English, RIES; X, GitHub, bilibili, Outlook).
 
 ### Caching (Vercel)
@@ -78,6 +78,6 @@ Cache strategy follows https://upxuu.com/posts/vercel-youxuan-cache (「缓存�
 
 - Keep Chinese UI copy and `lang="zh-CN"` unless the user asks otherwise.
 - Prefer single-file changes; avoid introducing a build toolchain unless explicitly requested.
-- Escape any RSS/user-derived strings before injecting HTML.
+- Escape any feed/user-derived strings before injecting them into markup (see the `esc()` helper in `scripts/sync-posts.mjs`).
 - New visual work: either extend the active production style in `index.html`, or develop in a design experiment file and promote when ready.
 - `.claude/` and `.obsidian/` are gitignored; do not commit them.

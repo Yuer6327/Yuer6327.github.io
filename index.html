@@ -6,7 +6,6 @@
   <title>Yuer6327 | 项目开发与设计笔记</title>
   <meta name="description" content="Yuer6327 的个人技术博客，记录 Web 开发、开源项目与UI设计笔记。">
   <link rel="canonical" href="https://yuer6327.top" />
-  <link rel="preconnect" href="https://blog.yuer6327.top" crossorigin />
   <!-- Umami analytics: lazy-loaded AFTER the UI settles (loader script before end of body) -->
   <!-- favicon: 16/32px layers of blog .ico, inlined as data URI (0 requests) -->
   <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJ9SURBVDhPrY7bT1JxHMBpuba2Vv4PPfbWsh6qh2rWk9rFtVpttTW1Hsq59VDLh9py2VBRaw3UKYXTvDLQshKYF2DiQW6CiIBAXPIExkHinMPl+/u2bLp57NHP43efz/f7FYn2mrIB79FeV6Z8Mcze3thgz2zNCSEHSFx/aKctoHs2Vm2JcgzgP8J5RMevwpewRHySyMQr5HHVGik9NZ+pKH0gbEVfnfSdv2U0h/g2mMU2fxYal3P4AxHjbq8Rqm+k8VENYvlF5G5WcKhSHdyOdTrdfk8svRxIEywzpOA4RbDJk4MMl4cYi+jmCUO3t6tJTVkKr13AbOWluR3XZ0NMsSnAMDY6j3XGJIwGcsBmCfCEgC/KgEa/hK29/WM5W8n9wlRlXV4plfDG4SdJq/LI5gIpRRUNOZOBRQaRBwI5ILASXYcJ7RwoWmVgGehDt1LxjTDHSontxBUScfAYMSP9+f3p7S+e9psa5NOrqDM6QT08DiOdcjAO9MH6whQgvYy8fc6E70TFJESp2e8eLqzXvTAPDh7ejBFRNC+XTVgUCgxNqvGndhQ4NwUkEQSSigLxL8C4wddrtqzqUl4Xbx3TlGxf3iKo1zUk7FYThuyI82NIaD8QhoaM3w2aGQfMphG7PYitr/vPC9sd+Dy+y2abLz5iCOLHSSe0KV3Q4WKh2cMXbqnCtUJ/F2I7e3YkQbiORRYlhgS80UfgeZcS7w0t1Qvd3dTX7xNbf093rSFqEgVwpAE++DMg99LYOBO5K9R3USWlilpUS8EGK+JLP+JoGrEzjijNIDZT6xKh/18in9TXB7WuZ1fVsZaHU/GeWn2yp3o6JXulDZ8TunvCH4/lzhUSiOfSAAAAAElFTkSuQmCC">
@@ -318,20 +317,6 @@ body[data-align="center"] .block-line {
   opacity: 1;
   transform: translateX(3px);
 }
-
-.posts-notice {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--muted);
-  padding: 0.6rem 0.2rem;
-  line-height: 1.6;
-}
-.posts-notice a {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.posts-notice[hidden] { display: none !important; }
 
 /* footer */
 .foot {
@@ -986,7 +971,6 @@ body[data-layout="grid"] .block .rows {
 body[data-layout="grid"] .block .item-meta {
   white-space: normal;
 }
-body[data-layout="grid"] .posts-notice { grid-column: 1 / -1; }
 
 /* layout: split — 01 | 02 side by side */
 body[data-layout="split"] .shell {
@@ -1357,7 +1341,6 @@ body[data-mood="glass"] .seedbar {
       <a class="item item--post" href="https://blog.yuer6327.top/posts/rank-track/" target="_blank" rel="noopener"><span class="item-main"><span class="item-label">Rank-Track</span><span class="item-meta">2026/08/28</span></span><span class="item-go">→</span></a>
       <a class="item item--post" href="https://blog.yuer6327.top/posts/%E4%B8%8A%E6%B5%B7%E9%AB%98%E4%B8%AD%E7%94%9F%E7%89%A9/" target="_blank" rel="noopener"><span class="item-main"><span class="item-label">上海高中生物</span><span class="item-meta">2026/08/26</span></span><span class="item-go">→</span></a>
       <a class="item item--post" href="https://blog.yuer6327.top/posts/dsh-plugin-noletme/" target="_blank" rel="noopener"><span class="item-main"><span class="item-label">dsh-plugin-NoLetMe</span><span class="item-meta">2026/08/19</span></span><span class="item-go">→</span></a>
-      <div class="posts-notice" id="posts-notice" hidden>RSS 暂时无法自动拉取最新内容，以下为离线快照。请访问 <a href="https://blog.yuer6327.top" target="_blank" rel="noopener">Blog（blog.yuer6327.top）</a> 查看。</div>
     </div>
   </section>
 
@@ -6595,9 +6578,7 @@ body[data-mood="glass"] .seedbar {
       var idx = sec.querySelector(".block-idx");
       if (idx) idx.textContent = n;
       var rows = sec.querySelector(".rows");
-      var has = rows && Array.prototype.some.call(rows.children, function (ch) {
-        return !(ch.id === "posts-notice");
-      });
+      var has = rows && rows.children.length > 0;
       if (!has) sec.style.display = "none";
     });
   })();
@@ -6810,179 +6791,6 @@ body[data-mood="glass"] .seedbar {
   splitName(document.getElementById("hero-name"));
   splitTagline(document.getElementById("hero-tagline"));
 
-  var postsUpgraded = false;
-
-  function showRssNotice(on) {
-    var n = document.getElementById("posts-notice");
-    if (!n) return;
-    if (on) n.removeAttribute("hidden");
-    else n.setAttribute("hidden", "");
-  }
-
-  function renderPostItems(posts) {
-    return posts.map(function (p) {
-      var tags = (p.cats || []).map(function (c) {
-        return '<span class="tag">' + esc(c) + "</span>";
-      }).join("");
-      return (
-        '<a class="item item--post" href="' + esc(p.link) + '" target="_blank" rel="noopener">' +
-          '<span class="item-main">' +
-            '<span class="item-label">' + esc(p.title) + "</span>" +
-            '<span class="item-meta">' + esc(p.date) + "</span>" +
-            (tags ? '<span class="item-tags">' + tags + "</span>" : "") +
-          "</span>" +
-          '<span class="item-go">→</span>' +
-        "</a>"
-      );
-    }).join("");
-  }
-
-  var RSS_CACHE_KEY = "yuer6327.rss.posts.v1";
-  var RSS_CACHE_TTL = 24 * 60 * 60 * 1000; /* 24h */
-
-  function readRssCache() {
-    try {
-      var raw = localStorage.getItem(RSS_CACHE_KEY);
-      if (!raw) return null;
-      var data = JSON.parse(raw);
-      if (!data || !Array.isArray(data.posts) || !data.posts.length) return null;
-      if (typeof data.ts !== "number") return null;
-      if (Date.now() - data.ts > RSS_CACHE_TTL) return null;
-      return data.posts;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function writeRssCache(posts) {
-    try {
-      localStorage.setItem(RSS_CACHE_KEY, JSON.stringify({
-        ts: Date.now(),
-        posts: posts
-      }));
-    } catch (e) { /* quota / private mode */ }
-  }
-
-  function paintPosts(posts, fromCache) {
-    var box = document.getElementById("posts-list");
-    if (!box) return;
-    postsUpgraded = true;
-    showRssNotice(false);
-    var notice = document.getElementById("posts-notice");
-    var noticeHtml = notice ? notice.outerHTML : "";
-    box.innerHTML = renderPostItems(posts) + noticeHtml;
-    showRssNotice(false);
-
-    var rows = box.querySelectorAll(".item");
-    var sec = box.closest("[data-stage=sec]") || box.closest(".block");
-    var sectionOpen = sec && getComputedStyle(sec).opacity !== "0" && sec.style.visibility !== "hidden";
-
-    /* cache hit paints before intro arms sections — keep rows hidden for armSection */
-    if (fromCache && !sectionOpen) {
-      if (typeof gsap !== "undefined" && gsap.set) gsap.set(rows, { autoAlpha: 0, y: 22 });
-      return;
-    }
-
-    if (typeof gsap !== "undefined" && gsap.to &&
-        !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      if (!sectionOpen) {
-        gsap.set(rows, { autoAlpha: 0, y: 22 });
-      } else {
-        gsap.fromTo(rows,
-          { autoAlpha: 0, y: 12 },
-          { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out",
-            stagger: 0.05, onComplete: function () { bindMagnetic(rows); resnapLiquid(); } });
-      }
-    } else if (sectionOpen) {
-      bindMagnetic(rows);
-      resnapLiquid();
-    }
-  }
-
-  function parseRssXml(xml) {
-    var doc = new DOMParser().parseFromString(xml, "text/xml");
-    if (doc.querySelector("parsererror")) throw new Error("parse");
-    var items = Array.prototype.slice.call(doc.querySelectorAll("item"));
-    var posts = [];
-    for (var i = 0; i < items.length && posts.length < 8; i++) {
-      var it = items[i];
-      var enc = it.getElementsByTagName("content:encoded")[0]
-             || it.getElementsByTagNameNS("http://purl.org/rss/1.0/modules/content/", "encoded")[0];
-      if (!enc || !enc.textContent) continue;
-      var title = (it.querySelector("title") || {}).textContent || "Untitled";
-      var link = (it.querySelector("link") || {}).textContent || "https://blog.yuer6327.top";
-      var pub = (it.querySelector("pubDate") || {}).textContent || "";
-      var date = "";
-      if (pub) {
-        try {
-          date = new Date(pub).toLocaleDateString("zh-CN", {
-            timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit"
-          });
-        } catch (e) { date = pub.slice(0, 16); }
-      }
-      var cats = Array.prototype.map.call(it.querySelectorAll("category"), function (c) {
-        return (c.textContent || "").trim();
-      }).filter(Boolean).slice(0, 3);
-      posts.push({ title: title, link: link, date: date, cats: cats });
-    }
-    if (!posts.length) throw new Error("empty");
-    return posts;
-  }
-
-  /* The hardcoded fallback list matches the live RSS when nothing changed.
-     If it already equals what the feed would render, skip repainting so the
-     section doesn't re-render + replay its stagger animation (Speed Index). */
-  function postsMatchDom(posts) {
-    var box = document.getElementById("posts-list");
-    if (!box) return false;
-    var dom = box.querySelectorAll("a.item--post");
-    if (dom.length !== posts.length) return false;
-    for (var i = 0; i < posts.length; i++) {
-      if (dom[i].getAttribute("href") !== posts[i].link) return false;
-      var label = dom[i].querySelector(".item-label");
-      if (!label || label.textContent !== posts[i].title) return false;
-      var meta = dom[i].querySelector(".item-meta");
-      if (!meta || meta.textContent !== posts[i].date) return false;
-    }
-    return true;
-  }
-
-  async function fetchPosts() {
-    var box = document.getElementById("posts-list");
-    if (!box || postsUpgraded) return;
-
-    var cached = readRssCache();
-    if (cached) {
-      paintPosts(cached, true);
-      return;
-    }
-
-    /* Fail fast: a hung blog host must resolve while the entrance animation is
-       still running, so the fallback notice lands with the flow instead of as
-       an isolated late visual change (drags Speed Index). */
-    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 3500);
-    try {
-      var res = await fetch("https://blog.yuer6327.top/rss.xml", {
-        cache: "no-store",
-        signal: ctrl ? ctrl.signal : undefined
-      });
-      if (!res.ok) throw new Error("rss " + res.status);
-      var xml = await res.text();
-      var posts = parseRssXml(xml);
-      writeRssCache(posts);
-      if (postsMatchDom(posts)) {
-        postsUpgraded = true; /* identical to fallback list — keep DOM as-is */
-      } else {
-        paintPosts(posts, false);
-      }
-    } catch (err) {
-      showRssNotice(true);
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-
   function bindMagnetic(nodes) {
     if (typeof gsap === "undefined" || !gsap.quickTo) return;
     if (!window.matchMedia("(hover: fine)").matches) return;
@@ -7191,8 +6999,6 @@ body[data-mood="glass"] .seedbar {
          intro / showAll exactly as before */
     }
   }
-
-  fetchPosts();
 
   /* ========== 6) GSAP motion ========== */
   if (typeof gsap === "undefined" || !gsap.to) {

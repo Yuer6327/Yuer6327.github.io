@@ -25,7 +25,6 @@ const INDEX = path.join(ROOT, "index.html");
 const FEED = "https://blog.yuer6327.top/rss.xml";
 const MAX_POSTS = 8;
 const LIST_ANCHOR = 'id="posts-list"';
-const NOTICE_ANCHOR = 'id="posts-notice"';
 
 const CHECK_ONLY = process.argv.includes("--check");
 
@@ -160,14 +159,17 @@ function sync(html, rows) {
   const openIdx = lines.findIndex((l) => l.includes(LIST_ANCHOR));
   if (openIdx < 0) throw new Error(`index.html 里找不到 ${LIST_ANCHOR}`);
 
+  /* 列表由 #posts-list 自身的 <div> 收尾：文章行缩进 6 空格，容器闭合标签
+     缩进 4 空格，所以第一个 4 空格缩进的 </div> 就是它的收尾。 */
   let closeIdx = -1;
   for (let i = openIdx + 1; i < lines.length; i++) {
-    if (lines[i].includes(NOTICE_ANCHOR)) { closeIdx = i; break; }
+    if (/^ {4}<\/div>$/.test(lines[i])) { closeIdx = i; break; }
   }
-  if (closeIdx < 0) throw new Error(`index.html 里找不到 ${NOTICE_ANCHOR}`);
+  if (closeIdx < 0) throw new Error("#posts-list 的收尾 </div> 找不到");
 
   /* 只认「整块都是文章行」的形态；出现别的东西说明结构变了，宁可不改 */
   const current = lines.slice(openIdx + 1, closeIdx);
+  if (!current.length) throw new Error("#posts-list 内没有任何文章行，已中止");
   const looksLikeRows = current.every((l) => /^\s*<a class="item item--post"/.test(l));
   if (!looksLikeRows) {
     throw new Error(`#posts-list 内不是预期的文章行结构（${current.length} 行），已中止`);

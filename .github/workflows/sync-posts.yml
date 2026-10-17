@@ -1,10 +1,9 @@
 ---
-# Latest Posts 兜底快照自动同步
+# Latest Posts 列表自动同步
 #
-# 背景：index.html 里 Latest Posts 的 8 行硬编码快照，是 RSS 失败时的离线兜底，
-# 也是首屏直接渲染的内容。它与线上 RSS 一致时，页面的 postsMatchDom() 会走
-# 「跳过重绘」快路径（不重放 stagger 动画，利于 Speed Index）。博客发文不推送
-# 本仓库，所以这份快照会漂移 —— 此工作流定时把它拉回同步。
+# 背景：index.html 里 Latest Posts 的 8 行是直接写死的静态标记，页面不再在运行时
+# 拉 RSS —— 省掉一次跨域请求，也让该区块随首帧就位。代价是博客发文不推送本仓库，
+# 这份列表会漂移，所以由本工作流定时从 RSS 重写它。
 #
 # 为什么是定时而不是 Vercel buildCommand：buildCommand 只在「本仓库被推送」时
 # 才跑，博客单独发文不会触发，仍会漂移；定时任务与首页部署解耦。
@@ -12,7 +11,7 @@
 # 注意：用 GITHUB_TOKEN 提交的推送不会触发其它 push 工作流，所以推送后补一步
 # workflow_dispatch 叫醒 cache-hit-check（dispatch 事件是官方例外，永远会创建
 # 新 run），否则新部署的边缘缓存会一直是冷的。
-name: Latest Posts 兜底快照同步
+name: Latest Posts 列表同步
 
 on:
   schedule:
