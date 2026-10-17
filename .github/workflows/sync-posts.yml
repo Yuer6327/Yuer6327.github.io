@@ -1,0 +1,70 @@
+---
+# Latest Posts 兜底快照自动同步
+#
+# 背景：index.html 里 Latest Posts 的 8 行硬编码快照，是 RSS 失败时的离线兜底，
+# 也是首屏直接渲染的内容。它与线上 RSS 一致时，页面的 postsMatchDom() 会走
+# 「跳过重绘」快路径（不重放 stagger 动画，利于 Speed Index）。博客发文不推送
+# 本仓库，所以这份快照会漂移 —— 此工作流定时把它拉回同步。
+#
+# 为什么是定时而不是 Vercel buildCommand：buildCommand 只在「本仓库被推送」时
+# 才跑，博客单独发文不会触发，仍会漂移；定时任务与首页部署解耦。
+#
+# 注意：用 GITHUB_TOKEN 提交的推送不会触发其它 push 工作流，所以推送后补一步
+# workflow_dispatch 叫醒 cache-hit-check（dispatch 事件是官方例外，永远会创建
+# 新 run），否则新部署的边缘缓存会一直是冷的。
+name: Latest Posts 兜底快照同步
+
+on:
+  schedule:
+    # UTC 19:07 = 北京 03:07，避开整点与白天高峰；分钟取 7 避开整点/半点。
+    - cron: "7 19 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 提交快照
+  actions: write    # 唤醒 cache-hit-check
+
+concurrency:
+  group: sync-posts
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # 脚本只在全部校验通过后才落盘；任何失败（网络/解析/结构不符）都非 0 退出
+      # 且不动 index.html，所以这一步失败时快照保持原样即可，无需额外兜底。
+      - name: 同步快照
+        run: node scripts/sync-posts.mjs
+
+      # 没变化就不提交，避免制造空提交
+      - name: 提交并推送
+        id: commit
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "::notice::快照已是最新，无需提交"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          # 换行写在 printf 里，避免 YAML 块标量里出现顶格空行导致解析失败
+          printf 'chore: 自动同步 Latest Posts 兜底快照\n\n由 .github/workflows/sync-posts.yml 定时生成，内容取自 blog RSS 前 8 篇。\n' > /tmp/msg.txt
+          git commit -F /tmp/msg.txt
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN 的推送不会触发 push 工作流，这里手动唤醒预热，
+      # 否则新部署的边缘缓存要等第一个访客回源才回暖。
+      - name: 唤醒缓存预热（仅在真的推送后）
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run cache-hit-check.yml --ref main

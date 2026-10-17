@@ -30,6 +30,8 @@ Only `index.html` is the live entry. Design experiments live in sibling files an
 | `index.html` | **Production** homepage. Seed-driven generative design + GSAP (3.13.0, inlined verbatim at end of body). Single self-contained file. |
 | `vercel.json` | Vercel cache headers. Applies `Cache-Control: public, max-age=0, s-maxage=315360000, must-revalidate` to everything. |
 | `.github/workflows/cache-hit-check.yml` | Cache preheat on push to `main`: waits for deploy, curls the pages, counts HIT/MISS, uploads report. |
+| `.github/workflows/sync-posts.yml` | Scheduled (daily 19:07 UTC = 03:07 CST) rewrite of the Latest Posts fallback snapshot in `index.html`. Commits via `GITHUB_TOKEN` on change, then dispatches `cache-hit-check.yml` (a bot push does not re-trigger `push` workflows, so the edge cache would otherwise stay cold). |
+| `scripts/sync-posts.mjs` | The sync script used by that workflow. Regenerates the 8 fallback rows from the live RSS. All validation happens before any write — on any failure (network, parse, structure) it exits non-zero and leaves `index.html` untouched. `--check` reports staleness via exit code (0 current, 1 stale). |
 | `CNAME` | Leftover from GitHub Pages; unused by Vercel (served as a static file at `/CNAME`). Harmless. |
 
 ## Architecture (single-page)
@@ -52,7 +54,7 @@ There is no shared CSS/JS module system. Copy patterns deliberately between vari
 ### Dynamic data
 
 - **Time**: `Asia/Shanghai` via `toLocaleTimeString` / `toLocaleString` with `zh-CN`; footer shows `UTC+8`.
-- **Posts**: `fetch('https://blog.yuer6327.top/rss.xml')`, parse with `DOMParser`, skip items without `content:encoded`, show up to 8. Titles/tags/dates/descriptions go through an HTML-escape helper before `innerHTML`.
+- **Posts**: `fetch('https://blog.yuer6327.top/rss.xml')`, parse with `DOMParser`, skip items without `content:encoded`, show up to 8. Titles/tags/dates/descriptions go through an HTML-escape helper before `innerHTML`. The 8 rows hard-coded in `#posts-list` are the offline fallback (and what paints first); when they match the feed exactly, `postsMatchDom()` skips the repaint so the stagger animation doesn't replay. `scripts/sync-posts.mjs` keeps them in sync — it mirrors the page's own escape/parse/date logic, so its output is byte-identical to what `renderPostItems` would produce.
 - **Projects / social links**: hard-coded in markup (Blog, Mathle, English, RIES; X, GitHub, bilibili, Outlook).
 
 ### Caching (Vercel)
