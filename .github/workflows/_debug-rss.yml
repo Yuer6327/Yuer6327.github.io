@@ -1,0 +1,31 @@
+---
+name: _debug-rss
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: probe
+        run: |
+          UA="yuer6327-homepage-sync/1.0 (+https://www.yuer6327.top/)"
+          echo "=== A: default UA from script ==="
+          curl -sS -o /tmp/a.body -D /tmp/a.hdr -A "$UA" --max-time 20 "https://blog.yuer6327.top/rss.xml" || true
+          cat /tmp/a.hdr || true
+          echo "--- body head ---"
+          head -c 600 /tmp/a.body || true
+          echo
+          echo "=== B: curl default UA ==="
+          curl -sS -o /tmp/b.body -D /tmp/b.hdr --max-time 20 "https://blog.yuer6327.top/rss.xml" || true
+          cat /tmp/b.hdr || true
+          head -c 300 /tmp/b.body || true
+          echo
+          echo "=== C: browser-ish UA ==="
+          curl -sS -o /tmp/c.body -D /tmp/c.hdr -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" --max-time 20 "https://blog.yuer6327.top/rss.xml" || true
+          cat /tmp/c.hdr || true
+          echo "=== D: bare hostname, no CDN path ==="
+          curl -sS -o /dev/null -w "code=%{http_code}\n" --max-time 20 "https://blog.yuer6327.top/" || true
+          echo "=== E: node fetch ==="
+          node -e 'fetch("https://blog.yuer6327.top/rss.xml",{headers:{"user-agent":"yuer6327-homepage-sync/1.0 (+https://www.yuer6327.top/)"}}).then(async r=>{console.log("status",r.status);console.log([...r.headers].map(([k,v])=>k+": "+v).join("\n"));const t=await r.text();console.log("body:",t.slice(0,400));}).catch(e=>console.log("ERR",e.message))'
