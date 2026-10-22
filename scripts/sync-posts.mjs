@@ -22,11 +22,57 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const INDEX = path.join(ROOT, "index.html");
-const FEED = "https://blog.yuer6327.top/rss.xml";
+
+/* 抓取源按优先级尝试。
+   首选公开域名，与被同步的线上内容同源；但 blog.yuer6327.top 挂在 Cloudflare
+   自定义域后面，zone 里的 WAF 规则 `cf.threat_score gt 10 → challenge` 会把
+   GitHub Actions 的 runner IP（Azure 数据中心段）判成可疑：实测 /rss.xml 与 / 均返回
+   403 + `cf-mitigated: challenge`（"Just a moment..." 挑战页）。
+   所以备用源用 Pages 部署别名（同一份构建产物、不走该 zone 的 WAF，实测 200 且
+   字节数一致），公开域名被 challenge 时自动回退。RSS 内的 <link> 是绝对地址，
+   回退不影响写进 index.html 的链接。 */
+const FEEDS = [
+  "https://blog.yuer6327.top/rss.xml",
+  "https://blog-4em.pages.dev/rss.xml"
+];
+const UA = "yuer6327-homepage-sync/1.0 (+https://www.yuer6327.top/)";
 const MAX_POSTS = 8;
 const LIST_ANCHOR = 'id="posts-list"';
 
 const CHECK_ONLY = process.argv.includes("--check");
+
+/* 依次尝试 FEEDS，第一个拿到真 RSS 的源胜出；全部失败才抛错 */
+async function fetchFeed() {
+  const failures = [];
+  for (const url of FEEDS) {
+    console.log(`抓取 ${url} …`);
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "user-agent": UA,
+          accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8"
+        },
+        redirect: "follow",
+        signal: AbortSignal.timeout(20000)
+      });
+      if (!res.ok) {
+        failures.push(`${url} → HTTP ${res.status}`);
+        continue;
+      }
+      const xml = await res.text();
+      /* 挑战页/错误页也可能以 200 返回，用 RSS 骨架再确认一次 */
+      if (!xml.includes("<rss") || !xml.includes("<item>")) {
+        failures.push(`${url} → 返回内容不是 RSS`);
+        continue;
+      }
+      if (url !== FEEDS[0]) console.log(`已回退到备用源（${failures.join("；")}）`);
+      return xml;
+    } catch (err) {
+      failures.push(`${url} → ${err.message}`);
+    }
+  }
+  throw new Error(`所有抓取源均失败：${failures.join("；")}`);
+}
 
 /* 与 index.html 里的 esc() 逐字符一致：& 必须最先替换 */
 function esc(s) {
@@ -181,13 +227,7 @@ function sync(html, rows) {
 }
 
 async function main() {
-  console.log(`抓取 ${FEED} …`);
-  const res = await fetch(FEED, {
-    headers: { "user-agent": "yuer6327-homepage-sync/1.0 (+https://www.yuer6327.top/)" },
-    signal: AbortSignal.timeout(20000)
-  });
-  if (!res.ok) throw new Error(`RSS 返回 ${res.status}`);
-  const xml = await res.text();
+  const xml = await fetchFeed();
 
   const posts = parseFeed(xml);
   if (!posts.length) throw new Error("RSS 里没有解析出任何带 content:encoded 的条目");
