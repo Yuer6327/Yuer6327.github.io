@@ -34,12 +34,16 @@ const INDEX = path.join(ROOT, "index.html");
    两者都会把 GitHub Actions 的 runner IP（Azure 数据中心段）判成可疑：实测任意路径、
    任意 UA 都是 403 + `cf-mitigated: challenge`。所以每个源后面都跟一份 Pages 部署
    别名（同一份构建产物、不走该 zone 的 WAF）。端点返回的是绝对 URL，回退不影响
-   写进 index.html 的链接。 */
+   写进 index.html 的链接。
+
+   顺序是「先 JSON 跨两个域名，再 RSS 跨两个域名」，而不是域名内先 JSON 后 RSS：
+   公开域名的可达性会变（BFM 的 challenge 判定看 IP 声誉，同一天里可能突然放行），
+   若按域名分组，RSS 偶然能通时就会绕过结构化端点，白白走一遍正文解析。 */
 const ORIGINS = ["https://blog.yuer6327.top", "https://blog-4em.pages.dev"];
-const SOURCES = ORIGINS.flatMap((origin) => [
-  { url: `${origin}/latest-posts.json`, kind: "json" },
-  { url: `${origin}/rss.xml`, kind: "rss" }
-]);
+const SOURCES = [
+  ...ORIGINS.map((origin) => ({ url: `${origin}/latest-posts.json`, kind: "json" })),
+  ...ORIGINS.map((origin) => ({ url: `${origin}/rss.xml`, kind: "rss" }))
+];
 const UA = "yuer6327-homepage-sync/1.0 (+https://www.yuer6327.top/)";
 const MAX_POSTS = 8;
 const LIST_ANCHOR = 'id="posts-list"';

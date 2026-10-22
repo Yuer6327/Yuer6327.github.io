@@ -31,7 +31,7 @@ Only `index.html` is the live entry. Design experiments live in sibling files an
 | `vercel.json` | Vercel cache headers. Applies `Cache-Control: public, max-age=0, s-maxage=315360000, must-revalidate` to everything. |
 | `.github/workflows/cache-hit-check.yml` | Cache preheat on push to `main`: waits for deploy, curls the pages, counts HIT/MISS, uploads report. |
 | `.github/workflows/sync-posts.yml` | Scheduled (daily 19:07 UTC = 03:07 CST) rewrite of the Latest Posts list in `index.html`. Commits via `GITHUB_TOKEN` on change, then dispatches `cache-hit-check.yml` (a bot push does not re-trigger `push` workflows, so the edge cache would otherwise stay cold). |
-| `scripts/sync-posts.mjs` | The sync script used by that workflow. Regenerates the 8 post rows from the blog's `latest-posts.json` (RSS is only a fallback). Tries `https://blog.yuer6327.top/…` first, then the Pages alias `https://blog-4em.pages.dev/…` (see Gotcha below). All validation happens before any write — on any failure (network, parse, structure) it exits non-zero and leaves `index.html` untouched. `--check` reports staleness via exit code (0 current, 1 stale). |
+| `scripts/sync-posts.mjs` | The sync script used by that workflow. Regenerates the 8 post rows from the blog's `latest-posts.json` (RSS is only a fallback). Tries both origins for `latest-posts.json` first, then both for `rss.xml` (see Gotcha below). All validation happens before any write — on any failure (network, parse, structure) it exits non-zero and leaves `index.html` untouched. `--check` reports staleness via exit code (0 current, 1 stale). |
 | `CNAME` | Leftover from GitHub Pages; unused by Vercel (served as a static file at `/CNAME`). Harmless. |
 
 ## Architecture (single-page)
