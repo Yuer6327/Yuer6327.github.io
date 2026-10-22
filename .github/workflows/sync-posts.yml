@@ -3,7 +3,7 @@
 #
 # 背景：index.html 里 Latest Posts 的 8 行是直接写死的静态标记，页面不再在运行时
 # 拉 RSS —— 省掉一次跨域请求，也让该区块随首帧就位。代价是博客发文不推送本仓库，
-# 这份列表会漂移，所以由本工作流定时从 RSS 重写它。
+# 这份列表会漂移，所以由本工作流定时从博客侧 latest-posts.json 重写它（RSS 仅兜底）。
 #
 # 为什么是定时而不是 Vercel buildCommand：buildCommand 只在「本仓库被推送」时
 # 才跑，博客单独发文不会触发，仍会漂移；定时任务与首页部署解耦。
@@ -55,7 +55,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           # 换行写在 printf 里，避免 YAML 块标量里出现顶格空行导致解析失败
-          printf 'chore: 自动同步 Latest Posts 兜底快照\n\n由 .github/workflows/sync-posts.yml 定时生成，内容取自 blog RSS 前 8 篇。\n' > /tmp/msg.txt
+          printf 'chore: 自动同步 Latest Posts 兜底快照\n\n由 .github/workflows/sync-posts.yml 定时生成，内容取自博客 latest-posts.json 前 8 篇（RSS 兜底）。\n' > /tmp/msg.txt
           git commit -F /tmp/msg.txt
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"

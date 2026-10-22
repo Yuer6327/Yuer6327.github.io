@@ -3,13 +3,13 @@
  * 同步 index.html 中 Latest Posts 的硬编码兜底快照。
  *
  * 背景：index.html 里那 8 行 <a class="item item--post"> 是 RSS 拉取失败时的离线
- * 兜底；同时也是首屏直接渲染的内容。当它和线上 RSS 完全一致时，页面里的
+ * 兜底；同时也是首屏直接渲染的内容。当它和线上数据完全一致时，页面里的
  * postsMatchDom() 会命中「跳过重绘」的快路径（不重放 stagger 动画，利于 Speed
  * Index）。所以这份快照必须随博客更新而保持同步。
  *
- * 本脚本由 .github/workflows/sync-posts.yml 定时执行：抓 RSS → 重写这 8 行 →
- * 有变化才提交。任何异常（网络、解析、结构不符）都直接非 0 退出且不落盘，
- * 快照保持原样，绝不写出半个文件。
+ * 本脚本由 .github/workflows/sync-posts.yml 定时执行：抓博客侧 latest-posts.json
+ * （RSS 兜底）→ 重写这 8 行 → 有变化才提交。任何异常（网络、解析、结构不符）都
+ * 直接非 0 退出且不落盘，快照保持原样，绝不写出半个文件。
  *
  * 用法：
  *   node scripts/sync-posts.mjs            # 就地更新
@@ -23,34 +23,82 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const INDEX = path.join(ROOT, "index.html");
 
-/* 抓取源按优先级尝试。
-   首选公开域名，与被同步的线上内容同源；但 blog.yuer6327.top 挂在 Cloudflare
-   自定义域后面，zone 里的 WAF 规则 `cf.threat_score gt 10 → challenge` 会把
-   GitHub Actions 的 runner IP（Azure 数据中心段）判成可疑：实测 /rss.xml 与 / 均返回
-   403 + `cf-mitigated: challenge`（"Just a moment..." 挑战页）。
-   所以备用源用 Pages 部署别名（同一份构建产物、不走该 zone 的 WAF，实测 200 且
-   字节数一致），公开域名被 challenge 时自动回退。RSS 内的 <link> 是绝对地址，
-   回退不影响写进 index.html 的链接。 */
-const FEEDS = [
-  "https://blog.yuer6327.top/rss.xml",
-  "https://blog-4em.pages.dev/rss.xml"
-];
+/* 数据源按优先级尝试：博客侧的 /latest-posts.json 优先，RSS 只作兜底。
+   JSON 由博客仓库 src/pages/latest-posts.json.ts 在构建期生成，内部就是站点的
+   getSortedPosts（draft 过滤 → pinned 置顶 → published 倒序），所以首页不必复刻
+   任何排序规则；RSS 里 <item> 塞着整篇正文，取字段要绕 content:encoded，仅留作
+   博客侧端点不可用时的退路。
+
+   域名顺序：公开域名在前（与线上内容同源），但 blog.yuer6327.top 挂在 Cloudflare
+   自定义域后面，zone 里开着 Bot Fight Mode + `cf.threat_score gt 10 → challenge`，
+   两者都会把 GitHub Actions 的 runner IP（Azure 数据中心段）判成可疑：实测任意路径、
+   任意 UA 都是 403 + `cf-mitigated: challenge`。所以每个源后面都跟一份 Pages 部署
+   别名（同一份构建产物、不走该 zone 的 WAF）。端点返回的是绝对 URL，回退不影响
+   写进 index.html 的链接。 */
+const ORIGINS = ["https://blog.yuer6327.top", "https://blog-4em.pages.dev"];
+const SOURCES = ORIGINS.flatMap((origin) => [
+  { url: `${origin}/latest-posts.json`, kind: "json" },
+  { url: `${origin}/rss.xml`, kind: "rss" }
+]);
 const UA = "yuer6327-homepage-sync/1.0 (+https://www.yuer6327.top/)";
 const MAX_POSTS = 8;
 const LIST_ANCHOR = 'id="posts-list"';
 
 const CHECK_ONLY = process.argv.includes("--check");
 
-/* 依次尝试 FEEDS，第一个拿到真 RSS 的源胜出；全部失败才抛错 */
-async function fetchFeed() {
+/* 与页面 renderPostItems 同一条本地化调用，保证两边输出逐字符一致 */
+function formatDate(raw) {
+  if (!raw) return "";
+  const d = new Date(raw);
+  return Number.isNaN(d.getTime())
+    ? String(raw).slice(0, 16)
+    : d.toLocaleDateString("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+}
+
+/* /latest-posts.json → 与 parseFeed 同形的结果集。字段不合规就整源判失败，
+   不拿半份数据去覆盖快照。 */
+function parsePostsJson(text, url) {
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error("不是合法 JSON");
+  }
+  const list = Array.isArray(data?.posts) ? data.posts : null;
+  if (!list) throw new Error("缺少 posts 数组");
+
+  const posts = [];
+  for (const p of list.slice(0, MAX_POSTS)) {
+    const title = typeof p?.title === "string" ? p.title : "";
+    const link = typeof p?.url === "string" ? p.url : "";
+    if (!title || !/^https?:\/\//.test(link)) {
+      throw new Error(`条目字段不合规（${url}）：${JSON.stringify(p).slice(0, 120)}`);
+    }
+    /* tags 端点里带着，但首页这 8 行刻意不渲染标签（RSS 时代也没有 category），
+       保持视觉与既有快照一致 */
+    posts.push({ title, link, date: formatDate(p.published), cats: [] });
+  }
+  return posts;
+}
+
+/* 依次尝试 SOURCES，第一个拿到可用数据的源胜出；全部失败才抛错 */
+async function fetchPosts() {
   const failures = [];
-  for (const url of FEEDS) {
+  for (const [i, { url, kind }] of SOURCES.entries()) {
     console.log(`抓取 ${url} …`);
     try {
       const res = await fetch(url, {
         headers: {
           "user-agent": UA,
-          accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8"
+          accept:
+            kind === "json"
+              ? "application/json, */*;q=0.8"
+              : "application/rss+xml, application/xml;q=0.9, */*;q=0.8"
         },
         redirect: "follow",
         signal: AbortSignal.timeout(20000)
@@ -59,19 +107,20 @@ async function fetchFeed() {
         failures.push(`${url} → HTTP ${res.status}`);
         continue;
       }
-      const xml = await res.text();
-      /* 挑战页/错误页也可能以 200 返回，用 RSS 骨架再确认一次 */
-      if (!xml.includes("<rss") || !xml.includes("<item>")) {
-        failures.push(`${url} → 返回内容不是 RSS`);
+      const body = await res.text();
+      const posts =
+        kind === "json" ? parsePostsJson(body, url) : parseFeedOrThrow(body, url);
+      if (!posts.length) {
+        failures.push(`${url} → 没有任何条目`);
         continue;
       }
-      if (url !== FEEDS[0]) console.log(`已回退到备用源（${failures.join("；")}）`);
-      return xml;
+      if (i > 0) console.log(`已回退到备用源（${failures.join("；")}）`);
+      return posts;
     } catch (err) {
       failures.push(`${url} → ${err.message}`);
     }
   }
-  throw new Error(`所有抓取源均失败：${failures.join("；")}`);
+  throw new Error(`所有数据源均失败：${failures.join("；")}`);
 }
 
 /* 与 index.html 里的 esc() 逐字符一致：& 必须最先替换 */
@@ -123,8 +172,13 @@ function items(xml) {
   return out;
 }
 
-/* 与页面 parseRssXml 一致：跳过没有 content:encoded 的条目，最多 8 条 */
-function parseFeed(xml) {
+/* 与页面 parseRssXml 一致：跳过没有 content:encoded 的条目，最多 8 条。
+   只用于 JSON 端点不可用时的兜底。 */
+function parseFeedOrThrow(xml, url) {
+  /* 挑战页/错误页也可能以 200 返回，用 RSS 骨架先确认一次 */
+  if (!xml.includes("<rss") || !xml.includes("<item>")) {
+    throw new Error("返回内容不是 RSS");
+  }
   const posts = [];
   for (const item of items(xml)) {
     if (posts.length >= MAX_POSTS) break;
@@ -141,19 +195,7 @@ function parseFeed(xml) {
     let raw = field(head, "pubDate");
     if (!raw) raw = field(item, "pubDate");
 
-    let date = "";
-    if (raw) {
-      const d = new Date(raw);
-      /* 与页面同一条本地化调用，保证两边输出逐字符一致 */
-      date = Number.isNaN(d.getTime())
-        ? raw.slice(0, 16)
-        : d.toLocaleDateString("zh-CN", {
-            timeZone: "Asia/Shanghai",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit"
-          });
-    }
+    const date = formatDate(raw);
 
     const cats = [];
     for (let p = 0; cats.length < 3; ) {
@@ -227,10 +269,7 @@ function sync(html, rows) {
 }
 
 async function main() {
-  const xml = await fetchFeed();
-
-  const posts = parseFeed(xml);
-  if (!posts.length) throw new Error("RSS 里没有解析出任何带 content:encoded 的条目");
+  const posts = await fetchPosts();
 
   const rows = renderRows(posts);
   for (const r of rows) {
