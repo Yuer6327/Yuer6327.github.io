@@ -349,7 +349,10 @@ body[data-align="center"] .block-line {
   background: color-mix(in srgb, var(--surface) 92%, transparent);
   border: 1.5px solid color-mix(in srgb, var(--fg) 28%, transparent);
   border-radius: 999px;
-  box-shadow: var(--shadow);
+  /* contact shadow is the ::after ellipse in every state (glass and CSS
+     fallback alike) — a blurred pill-sized box-shadow wraps ~20px above the
+     top edge, which read as a dirty fringe over the rim (Round 3) */
+  box-shadow: none;
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--muted);
@@ -492,6 +495,10 @@ body.liquid-glass .seedbar {
      duplicate backdrop blur underneath it */
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  /* contact shadow is the ::after ellipse; the lens keeps no shadow of its
+     own (shadow:false) and liquidGL zeroes the inline one, so suppress the
+     base var(--shadow) too — one shadow source, no doubled bottom edge */
+  box-shadow: none;
 }
 /* vendored liquidGL v2.0.1 has no tint option (it zeroes the pane's own
    background), so emulate Apple's "prominent material" with a translucent
@@ -505,16 +512,47 @@ body.liquid-glass .seedbar::before {
   border-radius: inherit;
   /* Apple Regular glass: a light tint wash (the frost blur carries contrast)
      plus a static silhouette rim — the shader's drifting specular blobs are
-     off; this is the web equivalent of light defining the glass shape. The
-     outer layers are the contact shadow lifting the pill off the content
-     (Apple's glass casts an adaptive shadow over what it floats above). */
-  background: color-mix(in srgb, var(--surface) 38%, transparent);
+     off; this is the web equivalent of light defining the glass shape.
+     Round 3: the outer box-shadows moved to ::after as an under-pill
+     ellipse — a blurred pill-sized box-shadow reaches ~20px ABOVE the top
+     edge at visible alpha, which read as a dirty gray fringe over the rim
+     (Safari field report 2; measured flat band, alpha ~0.08-0.16 at 5-10px
+     above the edge). Apple's floating-bar shadow never wraps the top edge.
+     The ::before keeps the material only: tint wash + top light-gathering
+     band (raised to 0.12/26% to lift the edge refraction ghost) + inner top
+     glow + four-way rim. */
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0) 26%),
+    linear-gradient(to top, rgb(0 0 0 / 0.045), rgb(0 0 0 / 0) 14%),
+    color-mix(in srgb, var(--surface) 38%, transparent);
   box-shadow:
-    0 14px 34px hsl(0 0% 0% / 0.28),
-    0 3px 9px hsl(0 0% 0% / 0.16),
     inset 0 1px 0 rgb(255 255 255 / 0.38),
+    inset 0 2px 8px rgb(255 255 255 / 0.22),
+    inset 1px 0 0 rgb(255 255 255 / 0.14),
+    inset -1px 0 0 rgb(255 255 255 / 0.10),
     inset 0 -1px 0 rgb(0 0 0 / 0.08);
   z-index: 1;
+  pointer-events: none;
+}
+/* contact shadow — elliptical blob strictly under the pill, shared by the
+   glass state and the CSS fallback state alike. top overlaps the pill's
+   bottom edge by 6px so the line keeps a hint of contact; the rest fades
+   downward (radial falloff, no wrap onto the top/side edges). */
+.seedbar::after {
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: calc(100% - 6px);
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 50% 50% at center,
+    hsl(0 0% 0% / 0.17),
+    hsl(0 0% 0% / 0.06) 55%,
+    hsl(0 0% 0% / 0) 75%
+  );
+  z-index: 0;
   pointer-events: none;
 }
 /* NOTE: no scroll-edge blur band above the bar. Apple's scroll edge effect
@@ -5233,6 +5271,29 @@ body[data-mood="glass"] .seedbar {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.viewport(p.x, p.y, p.w, p.h);
+      /* local patch: hard-clip the lens to its own silhouette box (scissor
+         shares the viewport's coordinate space, origin p.x/p.y). The draw
+         quad is expanded for the shadow margin, and the shader's inShape
+         mask is the only thing keeping that margin glass-free — WebKit has
+         been observed rendering frost across the whole margin outside the
+         pane (the "blank strip" below a bottom-docked bar). A GPU-level
+         scissor to the box bounds is immune to that; since Round 3 the lens
+         keeps no shadow at all (options.shadow=false) and the contact shadow
+         lives in the CSS ::after ellipse, engine-independent. */
+      if (p.clipToBox) {
+        /* clamp both edges independently, then take width/height from the
+           clamped pair — keeps the scissor equal to the box's on-canvas part
+           even when the box straddles a canvas edge */
+        const scX = Math.max(0, Math.min(this.canvas.width, Math.round(p.x + p.subX)));
+        const scY = Math.max(0, Math.min(this.canvas.height, Math.round(p.y + p.subY)));
+        const scR = Math.max(0, Math.min(this.canvas.width, Math.round(p.x + p.subX + p.boxW)));
+        const scT = Math.max(0, Math.min(this.canvas.height, Math.round(p.y + p.subY + p.boxH)));
+        const scW = scR - scX;
+        const scH = scT - scY;
+        if (scW <= 0 || scH <= 0) return;
+        gl.enable(gl.SCISSOR_TEST);
+        gl.scissor(scX, scY, scW, scH);
+      }
       gl.uniform2f(this.u.res, p.w, p.h);
       gl.uniform2f(this.u.subpixel, p.subX, p.subY);
       gl.uniform2f(this.u.boxSize, p.boxW, p.boxH);
@@ -5264,6 +5325,7 @@ body[data-mood="glass"] .seedbar {
         gl.drawArrays(gl.TRIANGLES, 0, 6);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       }
+      if (p.clipToBox) gl.disable(gl.SCISSOR_TEST);
     }
 
     endFrame() {
@@ -6590,6 +6652,29 @@ fn fs() -> @location(0) vec4<f32> {
         this._shadows = new LiquidShadowCache(this);
       const shadow = this._shadows ? this._shadows.get(lens, p) : null;
       p.shadowEntry = shadow;
+      /* local patch: compute the pane's own box in top-down canvas pixels so
+         the render pass can scissor the lens draw to its silhouette. p.y is
+         GL-style bottom-up and p.subY is the box-bottom offset from the quad
+         bottom, so box bottom (bottom-up) = p.y + p.subY. WebKit froasts the
+         whole shadow margin when only the shader mask clips it (blank strip
+         under the bar); a scissor rect is engine-level and immune. */
+      let scissor = null;
+      if (p.clipToBox) {
+        /* clamp both edges independently, then take width/height from the
+           clamped pair (twin of the GL patch). p.y/p.subY are GL-style
+           bottom-up; the scissor rect converts the clamped top edge to
+           top-down for setScissorRect. */
+        const sL = Math.max(0, Math.min(this.canvas.width, Math.round(p.x + p.subX)));
+        const sR = Math.max(0, Math.min(this.canvas.width, Math.round(p.x + p.subX + p.boxW)));
+        const sB = Math.max(0, Math.min(this.canvas.height, Math.round(p.y + p.subY)));
+        const sT = Math.max(0, Math.min(this.canvas.height, Math.round(p.y + p.subY + p.boxH)));
+        const sX = sL;
+        const sY = this.canvas.height - sT;
+        const sW = sR - sL;
+        const sH = sT - sB;
+        if (sW <= 0 || sH <= 0) return;
+        scissor = [sX, sY, sW, sH];
+      }
       const cx = Math.max(0, p.x);
       const cy = Math.max(0, this.canvas.height - p.y - p.h);
       const cw = Math.min(this.canvas.width, p.x + p.w) - cx;
@@ -6602,7 +6687,7 @@ fn fs() -> @location(0) vec4<f32> {
         subX: p.subX - (cx - p.x),
         subY: p.subY - Math.max(0, -p.y),
       };
-      this._drawQueue.push({ p, x: cx, y: cy, w: cw, h: ch });
+      this._drawQueue.push({ p, x: cx, y: cy, w: cw, h: ch, scissor });
     }
 
     endFrame() {
@@ -6756,6 +6841,8 @@ fn fs() -> @location(0) vec4<f32> {
           pass.setBindGroup(0, d.content.bindGroup);
           pass.setBindGroup(1, this._uniformBindGroup, [i * 256]);
           pass.setViewport(d.x, d.y, d.w, d.h, 0, 1);
+          /* local patch: undo any lens scissor from an earlier draw */
+          pass.setScissorRect(0, 0, this.canvas.width, this.canvas.height);
           pass.draw(6);
           pass.setPipeline(this._lensPipe);
           continue;
@@ -6801,6 +6888,11 @@ fn fs() -> @location(0) vec4<f32> {
         }
         pass.setBindGroup(0, shadow ? shadow.lensGroup : this._lensBindGroup);
         pass.setViewport(d.x, d.y, d.w, d.h, 0, 1);
+        /* local patch: clip the glass to the pane silhouette (WebKit mask
+           leak) — the shadow margin is skipped entirely, contact shadow is
+           carried by the CSS layers */
+        if (d.scissor)
+          pass.setScissorRect(d.scissor[0], d.scissor[1], d.scissor[2], d.scissor[3]);
         pass.setBindGroup(1, this._uniformBindGroup, [i * 256]);
         pass.draw(6);
         if (this._compositeActive) {
@@ -6811,6 +6903,13 @@ fn fs() -> @location(0) vec4<f32> {
             shadow ? shadow.lensGroup : this._lensBindGroup,
           );
           visiblePass.setViewport(d.x, d.y, d.w, d.h, 0, 1);
+          if (d.scissor)
+            visiblePass.setScissorRect(
+              d.scissor[0],
+              d.scissor[1],
+              d.scissor[2],
+              d.scissor[3],
+            );
           visiblePass.setBindGroup(1, this._uniformBindGroup, [i * 256]);
           visiblePass.draw(6);
           visiblePass.end();
@@ -7191,6 +7290,23 @@ fn fs() -> @location(0) vec4<f32> {
       this._destroyed = false;
       this._cleanups = [];
       this._naughtyQueued = false;
+      /* local patch: WebKit (Safari / all iOS browsers) has been observed
+         rendering the lens glass across the whole expanded draw quad — the
+         shader's inShape mask fails outside the pane silhouette, froasting
+         the shadow margin into a blank strip below/above a bottom-docked
+         bar. On WebKit we scissor every lens draw to its own box; Chromium
+         keeps the exact previously-reviewed rendering. */
+      const ua = navigator.userAgent || "";
+      const isIOSLike =
+        /iPad|iPhone|iPod/.test(ua) ||
+        (/Macintosh/.test(ua) &&
+          typeof document !== "undefined" &&
+          "ontouchend" in document);
+      const isBlink =
+        /Chrome\/|Chromium\/|CriOS\/|Edg\/|EdgA\/|OPR\/|OPiOS\/|SamsungBrowser|UCBrowser|HuaweiBrowser|QQBrowser|MiuiBrowser/i.test(
+          ua,
+        );
+      this._clipLensToBox = isIOSLike || (/AppleWebKit/.test(ua) && !isBlink);
       this.canvas = document.createElement("canvas");
       this.canvas.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;`;
       this.canvas.setAttribute("data-liquid-ignore", "");
@@ -8483,6 +8599,7 @@ fn fs() -> @location(0) vec4<f32> {
       }
       prior.push({ x, y, w, h });
       this.backend.drawLens(lens, {
+        clipToBox: this._clipLensToBox,
         shadow,
         dpr,
         interaction,
@@ -11949,6 +12066,11 @@ fn fs() -> @location(0) vec4<f32> {
   var liquidGlassRevealed = false;
   var liquidGlassTextureReady = false;
   var liquidGlassRevealPending = false;
+  /* true once the engine boot has been scheduled (releaseSections) but the
+     init may not have run yet — lets the reveal path distinguish "init will
+     come" from "init is impossible" and avoid revealing a CSS pill that the
+     lens would then hide. */
+  var liquidGlassInitScheduled = false;
 
   function webglAvailable() {
     try {
@@ -12072,13 +12194,46 @@ fn fs() -> @location(0) vec4<f32> {
           var snap = resnapLiquid();
           if (snap && typeof snap.then === "function") snap.then(revealSeedbarGlass);
           else revealSeedbarGlass();
-        } else if (liquidGlassRef) {
-          /* texture still capturing — reveal as soon as on.init fires */
+        } else if (liquidGlassRef || liquidGlassInitScheduled) {
+          /* texture still capturing — or the engine boot is still sitting in
+             the idle queue — reveal as soon as on.init fires */
           liquidGlassRevealPending = true;
         } else {
           revealSeedbarGlass();
         }
       });
+  }
+
+  /* The WebGPU/WebGL boot (adapter + device + shader compile + first
+     whole-page snapshot) used to run right at intro start — on phones that
+     lands in the middle of the entrance animation and reads as a 0.5–1s
+     hitch. The seedbar is hidden until releaseSections() anyway, so the
+     engine boot is queued for idle time after the intro completes; the
+     reveal waits for the texture via liquidGlassRevealPending. If the boot
+     turns out to be impossible (no WebGL / reduced transparency), the CSS
+     seedbar is revealed here instead. */
+  function bootLiquidGlassIdle() {
+    if (liquidGlassInitDone || liquidGlassInitScheduled) return;
+    liquidGlassInitScheduled = true;
+    var run = function () {
+      initLiquidGlass();
+      /* the boot has now either succeeded (liquidGlassRef set) or failed
+         for good (no WebGL / reduced transparency / constructor threw) —
+         clear the scheduled flag so the reveal decision point can tell
+         "engine impossible, show the CSS pill" apart from "still queued".
+         run() is guaranteed to beat the decision point (rIC timeout 1.2s vs
+         fonts+1.4s) in normal timing, but must stay correct either way. */
+      liquidGlassInitScheduled = false;
+      if (!liquidGlassRef && liquidGlassRevealPending && !liquidGlassRevealed) {
+        liquidGlassRevealPending = false;
+        revealSeedbarGlass();
+      }
+    };
+    if (typeof requestIdleCallback === "function") {
+      requestIdleCallback(run, { timeout: 1200 });
+    } else {
+      setTimeout(run, 120);
+    }
   }
 
   function initLiquidGlass() {
@@ -12119,7 +12274,11 @@ fn fs() -> @location(0) vec4<f32> {
            ::before tint carries contrast, edges stay refractive. frost is raw
            texels: radius = frost*2 CSS px at resolution 2 → 12px blur. */
         frost: 6,
-        shadow: true,
+        /* Round 3: the shader's margin shadow is off — it doubles the new
+           ::after ellipse on Chromium and (on WebKit, where the scissor
+           already clips the margin) it was dead weight anyway. One shadow
+           source: the CSS ellipse, engine-independent. */
+        shadow: false,
         /* the shader's specular is drifting light blobs, not Apple's silhouette
            rim; the rim lives on the ::before layer instead. Off also drops the
            per-frame "animated" flag so v3 only renders on real changes. */
@@ -12245,9 +12404,11 @@ fn fs() -> @location(0) vec4<f32> {
 
     document.body.classList.remove("is-boot");
 
-    /* start the liquid-glass pane now (the seedbar itself stays hidden and is
-       revealed in releaseSections once the page elements have settled) */
-    initLiquidGlass();
+    /* NOTE: the liquid-glass engine no longer boots here — adapter/device
+       setup plus the first whole-page snapshot used to steal the intro's
+       frames on phones (the "opens then stutters for ~1s" report). It is
+       booted from releaseSections() in idle time instead, and the seedbar
+       reveal waits for the texture. */
 
     var intro = gsap.timeline({ defaults: { ease: "power3.out" } });
 
@@ -12376,8 +12537,10 @@ fn fs() -> @location(0) vec4<f32> {
         }, { threshold: 0.2 });
         fio.observe(foot);
       }
-      /* intro is finished → let the page settle, then reveal the seedbar
-         (apple-style) over a freshly-refreshed glass texture */
+      /* intro is finished → boot the glass engine during idle time, then let
+         the page settle and reveal the seedbar (apple-style) over a
+         freshly-refreshed glass texture */
+      bootLiquidGlassIdle();
       scheduleSeedbarReveal();
     }
 
