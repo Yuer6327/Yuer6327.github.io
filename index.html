@@ -490,7 +490,10 @@ body[data-align="center"] .block-line {
    transparent + it manages box-shadow), so here we just soften the CSS
    hairline border and lift the interactive children above the lens. */
 body.liquid-glass .seedbar {
-  border-color: color-mix(in srgb, var(--fg) 16%, transparent);
+  /* Round 4: border lightened 16%→10% — over a dark edge ghost the hairline
+     compounded into a dirty boundary line; the rim + refraction define the
+     silhouette now */
+  border-color: color-mix(in srgb, var(--fg) 10%, transparent);
   /* the lens canvas replaces the CSS glass entirely — don't pay for a
      duplicate backdrop blur underneath it */
   backdrop-filter: none;
@@ -525,7 +528,14 @@ body.liquid-glass .seedbar::before {
     linear-gradient(to bottom, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0) 26%),
     linear-gradient(to top, rgb(0 0 0 / 0.045), rgb(0 0 0 / 0) 14%),
     color-mix(in srgb, var(--surface) 38%, transparent);
+  /* Round 4: diffuse bottom-weighted shadow. The Round 3 ellipse read as a
+     dense "lump"; a large blur + strong downward offset + negative spread
+     keeps the contact under the pill while the fringe above the top edge
+     stays ≤ ~0.03 alpha (invisible). Same shadows mirrored on ::after for
+     the CSS fallback state below. */
   box-shadow:
+    0 20px 44px -4px hsl(0 0% 0% / 0.18),
+    0 6px 12px -2px hsl(0 0% 0% / 0.10),
     inset 0 1px 0 rgb(255 255 255 / 0.38),
     inset 0 2px 8px rgb(255 255 255 / 0.22),
     inset 1px 0 0 rgb(255 255 255 / 0.14),
@@ -534,25 +544,17 @@ body.liquid-glass .seedbar::before {
   z-index: 1;
   pointer-events: none;
 }
-/* contact shadow — elliptical blob strictly under the pill, shared by the
-   glass state and the CSS fallback state alike. top overlaps the pill's
-   bottom edge by 6px so the line keeps a hint of contact; the rest fades
-   downward (radial falloff, no wrap onto the top/side edges). */
-.seedbar::after {
+/* fallback state (no WebGL / reduced transparency) carries the same contact
+   shadow via ::after — ::before is glass-only and liquidGL zeroes the
+   pane's own inline box-shadow */
+body:not(.liquid-glass) .seedbar::after {
   content: "";
   position: absolute;
-  left: 4%;
-  right: 4%;
-  top: calc(100% - 6px);
-  height: 34px;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse 50% 50% at center,
-    hsl(0 0% 0% / 0.17),
-    hsl(0 0% 0% / 0.06) 55%,
-    hsl(0 0% 0% / 0) 75%
-  );
-  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    0 20px 44px -4px hsl(0 0% 0% / 0.18),
+    0 6px 12px -2px hsl(0 0% 0% / 0.10);
   pointer-events: none;
 }
 /* NOTE: no scroll-edge blur band above the bar. Apple's scroll edge effect
@@ -4550,6 +4552,14 @@ body[data-mood="glass"] .seedbar {
 
           if (u_frost > 0.0) {
               float radius = u_frost * 4.0;
+              /* local patch (Round 4): edge melt — content pulled in by the
+                 edge refraction (row borders, text above the pane) used to
+                 land as a dark structured band along the silhouette; real
+                 lensing melts hardest at the rim. Scale the Vogel taps by
+                 depth from the edge: full melt at the silhouette, fading
+                 over half the pane height (band = 0.5 * box height, device
+                 px — dpr-independent and exactly zero at the centre). */
+              float edgeMelt = 1.0 - smoothstep(0.0, u_boxSize.y * 0.5, -dmask);
               vec4 sum = vec4(0.0);
               const int SAMPLES = 56;
               /* local patch: fixed golden-angle disc (Vogel) sampling — the stock
@@ -4564,7 +4574,7 @@ body[data-mood="glass"] .seedbar {
               for (int i = 0; i < SAMPLES; i++) {
                   float fi = (float(i) + 0.5) / float(SAMPLES);
                   float angle = (float(i) + 0.5) * 2.399963229728657;
-                  float dist = sqrt(fi) * radius * 0.25;
+                  float dist = sqrt(fi) * radius * (0.25 + 0.9 * edgeMelt);
                   vec2 foff = vec2(cos(angle), sin(angle)) * texel * dist;
                   if (u_aberration > 0.0) {
                       sum.r += texture2D(u_blurTex, sampleUV + foff - chroma).r;
@@ -5494,6 +5504,10 @@ fn fs(in: VSOut) -> @location(0) vec4<f32> {
 
   if (u.frost > 0.0) {
     let radius = u.frost * 4.0;
+    /* local patch (Round 4): edge melt — twin of the GLSL one; content
+       pulled in by the edge refraction melts hardest at the rim, fading
+       over half the pane height (dpr-independent, zero at the centre). */
+    let edgeMelt = 1.0 - smoothstep(0.0, u.boxSize.y * 0.5, -dmask);
     var sum = vec4<f32>(0.0);
     /* local patch: fixed golden-angle disc (Vogel) sampling — coherent kernel
        twin of the GLSL one; per-pixel jitter reads as speckle over thin text */
@@ -5503,7 +5517,7 @@ fn fs(in: VSOut) -> @location(0) vec4<f32> {
     for (var i = 0; i < 56; i = i + 1) {
       let fi = (f32(i) + 0.5) / 56.0;
       let angle = (f32(i) + 0.5) * 2.399963229728657;
-      let dist = sqrt(fi) * radius * 0.25;
+      let dist = sqrt(fi) * radius * (0.25 + 0.9 * edgeMelt);
       let foff = vec2<f32>(cos(angle), sin(angle)) * texel * dist;
       if (u.aberration > 0.0) {
         let c0 = textureSampleLevel(u_blurTex, u_samp, sampleUV + foff - chroma, 0.0);
